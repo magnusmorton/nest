@@ -1,5 +1,6 @@
 import ast
 
-def containsLoop(code):
-    ast.parse(code)
+def containsLoop(ast):
+    loopVistor = LoopVistor()
+    loopVistor.visit(ast)
     return False
