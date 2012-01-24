@@ -1,2 +1,5 @@
+import ast
+
 def containsLoop(code):
-    pass
+    ast.parse(code)
+    return False
