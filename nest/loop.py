@@ -1,0 +1,2 @@
+def containsLoop(code):
+    pass
