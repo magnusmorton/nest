@@ -29,7 +29,7 @@ class LoopVisitor(ast.NodeVisitor):
             self.current_loop_environment = LoopEnvironment()
             top = True
         else:
-            self.current_loop_environment.increase_nesting();
+            self.current_loop_environment.increase_nesting()
         super(LoopVisitor, self).generic_visit(node)
         if top:
             self._loop_environments.append(self.current_loop_environment)
