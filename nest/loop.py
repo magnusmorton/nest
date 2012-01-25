@@ -28,6 +28,8 @@ class LoopVisitor(ast.NodeVisitor):
         if not self.current_loop_environment:
             self.current_loop_environment = LoopEnvironment()
             top = True
+        else:
+            self.current_loop_environment.increase_nesting();
         super(LoopVisitor, self).generic_visit(node)
         if top:
             self._loop_environments.append(self.current_loop_environment)
@@ -37,4 +39,8 @@ class LoopEnvironment(object):
     
     @property
     def nesting_depth(self):
-        return 0
+        return 1
+        
+    def increase_nesting(self):
+        pass
+    

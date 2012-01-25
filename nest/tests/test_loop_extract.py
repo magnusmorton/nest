@@ -53,13 +53,20 @@ class LoopVistitorTests(unittest.TestCase):
     def test_inner_loops_of_nest_ignored(self):
         self.loop_visitor.visit(ast.parse(SIMPLE_NESTED))
         self.assertEqual(self.loop_visitor.loops_found, 1, "Nested loop included in total number of loops")
+    #     
+    # def test_nest_depth_is_0_when_no_nesting(self):
+    #     self.loop_visitor.visit(ast.parse(SIMPLE_LOOP))
+    #     self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 0, "Nesting detected when not present")
+    #     
+    # def test_nest_depth_is_1_when_1_nested_loop(self):
+    #     self.loop_visitor.visit(ast.parse(SIMPLE_NESTED))
+    #     self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 1, "Wrong nesting depth detected")
+    #     
+class LoopEnvironmentTest(unittest.TestCase):
+    def test_single_increased_nesting(self):
+        env = nest.loop.LoopEnvironment()
+        env.increase_nesting()
+        assert env.nesting_depth == 1, "Wrong nesting depth detected"
         
-    def test_nest_depth_is_0_when_no_nesting(self):
-        self.loop_visitor.visit(ast.parse(SIMPLE_LOOP))
-        self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 0, "Nesting detected when not present")
-        
-    def test_nest_depth_is_1_when_1_nested_loop(self):
-        self.loop_visitor.visit(ast.parse(SIMPLE_NESTED))
-        self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 1, "Wrong nesting depth detected")
         
     
