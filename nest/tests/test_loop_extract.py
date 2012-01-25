@@ -1,7 +1,6 @@
 import nest.loop
 import ast
 import unittest
-from nose import with_setup
 
 SIMPLE_LOOP = """for i in [1,2,3]:
     a = 1
