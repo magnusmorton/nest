@@ -37,10 +37,13 @@ class LoopVisitor(ast.NodeVisitor):
 
 class LoopEnvironment(object):
     
+    def __init__(self):
+        self._nesting_depth = 0
+    
     @property
     def nesting_depth(self):
-        return 1
+        return self._nesting_depth
         
     def increase_nesting(self):
-        pass
+        self._nesting_depth += 1
     
