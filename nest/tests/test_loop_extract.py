@@ -2,11 +2,13 @@ import nest.loop
 import ast
 import unittest
 
-SIMPLE_LOOP = """for i in [1,2,3]:
+SIMPLE_LOOP = """
+for i in [1,2,3]:
     a = 1
 """
 
-TWO_LOOPS = """for i in [1,2,3]:
+TWO_LOOPS = """
+for i in [1,2,3]:
     a = 1
 
 for num in [1,2,3]:
@@ -14,7 +16,8 @@ for num in [1,2,3]:
 
 """
 
-SIMPLE_NESTED = """for a in [1,2,3]:
+SIMPLE_NESTED = """
+for a in [1,2,3]:
     for b in [4,5,6]:
         a*b
 """
