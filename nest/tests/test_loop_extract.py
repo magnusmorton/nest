@@ -24,15 +24,6 @@ for a in [1,2,3]:
 
 
 NON_LOOP_STATEMENT = "print(a)"
-
-""" Ignore these first tests.  They were included when I was trying to figure out what to do.
-"""
-def setup():
-    global simple_loop_ast 
-    simple_loop_ast = ast.parse(SIMPLE_LOOP)
-
-def testFindLoop():
-    assert nest.loop.containsLoop(simple_loop_as), "loop not found"
     
 class LoopVistitorTests(unittest.TestCase):
     def setUp(self):
