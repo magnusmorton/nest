@@ -20,16 +20,13 @@ def testFindLoop():
     
 class LoopVistitorTests(unittest.TestCase):
     def setUp(self):
-        self.trivial_loop_ast = ast.parse(SIMPLE_LOOP)
-        
+        self.loop_visitor = nest.loop.LoopVisitor()
         
     def test_1_loop_found(self):
-        loop_visitor = nest.loop.LoopVisitor()
-        loop_visitor.visit(self.trivial_loop_ast)
-        self.assertEqual(loop_visitor.loops_found, 1, "Wrong number of loops found")
+        self.loop_visitor.visit(ast.parse(SIMPLE_LOOP))
+        self.assertEqual(self.loop_visitor.loops_found, 1, "Wrong number of loops found")
         
     def test_no_loops_found(self):
-        loop_visitor = nest.loop.LoopVisitor()
-        loop_visitor.visit(ast.parse(NON_LOOP_STATEMENT))
-        self.assertEqual(loop_visitor.loops_found, 0, "loops found when not present")
+        self.loop_visitor.visit(ast.parse(NON_LOOP_STATEMENT))
+        self.assertEqual(self.loop_visitor.loops_found, 0, "loops found when not present")
         
