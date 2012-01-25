@@ -21,7 +21,7 @@ class LoopVistitorTests(unittest.TestCase):
         self.trivial_loop_ast = ast.parse(LOOP)
         
         
-    def test1LoopFound(self):
-        loopVisitor = nest.loop.LoopVisitor()
-        loopVisitor.visit(trivial_loop_ast)
-        self.assertEqual(loopVistor.loopsFound(), 1, "Wrong number of loops found")
+    def test_1_loop_found(self):
+        loop_visitor = nest.loop.LoopVisitor()
+        loop_visitor.visit(trivial_loop_ast)
+        self.assertEqual(loop_vistor.loops_found(), 1, "Wrong number of loops found")
