@@ -10,9 +10,7 @@ class LoopVisitor(ast.NodeVisitor):
     
     def __init__(self):
         super(LoopVisitor, self).__init__()
-        self._loops_found = 0
         self._loop_environments = []
-        self._in_loop = False
         self.current_loop_environment = None
     
     @property    
