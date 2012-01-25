@@ -15,6 +15,11 @@ for num in [1,2,3]:
 
 """
 
+SIMPLE_NESTED = """for a in [1,2,3]:
+    for b in [4,5,6]:
+        a*b
+"""
+
 
 NON_LOOP_STATEMENT = "print(a)"
 
@@ -42,5 +47,18 @@ class LoopVistitorTests(unittest.TestCase):
     def test_two_loops_found(self):
         self.loop_visitor.visit(ast.parse(TWO_LOOPS))
         self.assertEqual(self.loop_visitor.loops_found, 2, "Wrong number of loops found")
+    
+    #this is passing right now, but for the wrong reasons    
+    def test_inner_loops_of_nest_ignored(self):
+        self.loop_visitor.visit(ast.parse(SIMPLE_NESTED))
+        self.assertEqual(self.loop_visitor.loops_found, 1, "Nested loop included in total number of loops")
         
+    def test_nest_depth_is_0_when_no_nesting(self):
+        self.loop_visitor.visit(ast.parse(SIMPLE_LOOP))
+        self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 0, "Nesting detected when not present")
         
+    def test_nest_depth_is_1_when_1_nested_loop(self):
+        self.loop_visitor.visit(ast.parse(SIMPLE_NESTED))
+        self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 1, "Wrong nesting depth detected")
+        
+    
