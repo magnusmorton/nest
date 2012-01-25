@@ -13,6 +13,7 @@ class LoopVisitor(ast.NodeVisitor):
         self._loops_found = 0
         self._loop_environments = []
         self._in_loop = False
+        self.current_loop_environment = None
     
     @property    
     def loops_found(self):
@@ -24,14 +25,13 @@ class LoopVisitor(ast.NodeVisitor):
         
     def visit_For(self, node):
         top = False
-        if not self._in_loop:
-            self._loops_found += 1
-            self._loop_environments.append(LoopEnvironment())
-            self._in_loop = True
+        if not self.current_loop_environment:
+            self.current_loop_environment = LoopEnvironment()
             top = True
-        self.generic_visit(node)
+        super(LoopVisitor, self).generic_visit(node)
         if top:
-            self._in_loop = False
+            self._loop_environments.append(self.current_loop_environment)
+            self.current_loop_environment = None
 
 class LoopEnvironment(object):
     

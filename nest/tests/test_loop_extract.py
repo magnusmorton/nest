@@ -50,7 +50,6 @@ class LoopVistitorTests(unittest.TestCase):
         self.loop_visitor.visit(ast.parse(TWO_LOOPS))
         self.assertEqual(self.loop_visitor.loops_found, 2, "Wrong number of loops found")
     
-    #this is passing right now, but for the wrong reasons    
     def test_inner_loops_of_nest_ignored(self):
         self.loop_visitor.visit(ast.parse(SIMPLE_NESTED))
         self.assertEqual(self.loop_visitor.loops_found, 1, "Nested loop included in total number of loops")
