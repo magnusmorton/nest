@@ -1,5 +1,22 @@
 import ast
+
+def get_upper_bound(iterator):
+    visitor = BoundsVisitor()
+    visitor.visit(iterator)
+    return visitor.upper_bound
     
+    
+class BoundsVisitor(ast.NodeVisitor):
+    
+    @property
+    def upper_bound(self):
+        """returns upper bound"""
+        return self._upper_bound
+    
+    def visit_Call(self, node):
+        if node.func.id == "range":
+            self._upper_bound = node.args[0].n - 1
+
 class LoopVisitor(ast.NodeVisitor):
     
     def __init__(self):
@@ -31,6 +48,7 @@ class LoopEnvironment(object):
     
     def __init__(self):
         self._nesting_depth = 0
+        self._upper_bound = 0
     
     @property
     def nesting_depth(self):
@@ -38,4 +56,8 @@ class LoopEnvironment(object):
         
     def increase_nesting(self):
         self._nesting_depth += 1
+        
+    @property
+    def upper_bound(self):
+        return self._upper_bound
     

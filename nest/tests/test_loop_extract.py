@@ -27,6 +27,11 @@ for i in range(10):
     i*1
 """
 
+SIMPLE_RANGE_5 = """
+for i in range(5):
+    i*1
+"""
+
 
 NON_LOOP_STATEMENT = "print(a)"
     
@@ -58,10 +63,15 @@ class LoopVistitorTests(unittest.TestCase):
         self.visit(SIMPLE_NESTED)
         self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 1, "Wrong nesting depth detected")
        
-    def test_upper_bound_found_when_range_10(self):
-        self.visit(SIMPLE_RANGE)
-        self.assertEqual(self.loop_visitor.loop_environments[0].upper_bound, 10, "Detected upper bound was not 10")
-       
+    # def test_upper_bound_found_when_range_10(self):
+    #        self.visit(SIMPLE_RANGE)
+    #        self.assertEqual(self.loop_visitor.loop_environments[0].upper_bound, 9, "Detected upper bound was not 9")
+    #        
+    #    def test_upper_bound_found_when_range_5(self):
+    #        self.visit(SIMPLE_RANGE_5)
+    #        self.assertEqual(self.loop_visitor.loop_environments[0].upper_bound, 4, "Detected upper bound was not 4")
+    #        
+    
     def visit(self, source):
         self.loop_visitor.visit(ast.parse(source))
         
@@ -75,6 +85,16 @@ class LoopEnvironmentTest(unittest.TestCase):
         
     def test_unincreased_nest_level_is_0(self):
         assert self.env.nesting_depth == 0, "Nesting detected when not present"
+        
+        
+class HelperTests(unittest.TestCase):
+    def test_get_upper_bound_returns_9_from_range(self):
+        range_ast = ast.parse("range(10)")
+        self.assertEqual(nest.loop.get_upper_bound(range_ast), 9, "Detected upper bound was not 9")
+        
+    def test_get_upper_bound_returns_4_from_rage(self):
+        range_ast = ast.parse("range(5)")
+        self.assertEqual(nest.loop.get_upper_bound(range_ast), 4, "Detected upper bound was not 4")
         
         
     
