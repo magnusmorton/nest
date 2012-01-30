@@ -8,6 +8,10 @@ def get_upper_bound(iterator):
     
 class BoundsVisitor(ast.NodeVisitor):
     
+    def __init__(self):
+        super(BoundsVisitor, self ).__init__()
+        self._upper_bound = None
+    
     @property
     def upper_bound(self):
         """returns upper bound"""
@@ -35,7 +39,7 @@ class LoopVisitor(ast.NodeVisitor):
     def visit_For(self, node):
         top = False
         if not self.current_loop_environment:
-            self.current_loop_environment = LoopEnvironment()
+            self.current_loop_environment = LoopEnvironment(get_upper_bound(node.iter))
             top = True
         else:
             self.current_loop_environment.increase_nesting()
@@ -46,9 +50,9 @@ class LoopVisitor(ast.NodeVisitor):
 
 class LoopEnvironment(object):
     
-    def __init__(self):
+    def __init__(self, bound):
         self._nesting_depth = 0
-        self._upper_bound = 0
+        self._upper_bound = bound
     
     @property
     def nesting_depth(self):
