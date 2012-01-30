@@ -57,9 +57,10 @@ class LoopVistitorTests(unittest.TestCase):
     def test_nest_depth_is_1_when_1_nested_loop(self):
         self.visit(SIMPLE_NESTED)
         self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 1, "Wrong nesting depth detected")
-       # 
-       # def test_upper_bound_found_when_range_10(self):
-       #     self.loop_visitor
+       
+    def test_upper_bound_found_when_range_10(self):
+        self.visit(SIMPLE_RANGE)
+        self.assertEqual(self.loop_visitor.loop_environments[0].upper_bound, 10, "Detected upper bound was not 10")
        
     def visit(self, source):
         self.loop_visitor.visit(ast.parse(source))
