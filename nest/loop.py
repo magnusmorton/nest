@@ -64,4 +64,7 @@ class LoopEnvironment(object):
     @property
     def upper_bound(self):
         return self._upper_bound
-    
+
+    @property
+    def target(self):
+        return "i"

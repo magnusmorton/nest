@@ -71,9 +71,13 @@ class LoopVistitorTests(unittest.TestCase):
         self.visit(SIMPLE_RANGE_5)
         self.assertEqual(self.loop_visitor.loop_environments[0].upper_bound, 4, "Detected upper bound was not 4")
                                             
-    
+    def test_target_found_in_simple_case(self):
+        self.visit(SIMPLE_LOOP)
+        self.assertEqual(self.loop_visitor.loop_environments[0].target, "i", "Target found was not i")
+
     def visit(self, source):
         self.loop_visitor.visit(ast.parse(source))
+
         
 class LoopEnvironmentTest(unittest.TestCase):
     def setUp(self):
