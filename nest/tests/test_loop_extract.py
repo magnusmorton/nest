@@ -79,9 +79,9 @@ class LoopVistitorTests(unittest.TestCase):
         self.visit(SIMPLE_NESTED)
         self.assertEqual(self.loop_visitor.loop_environments[0].target, "a", "Target found was not a")
         
-    # def test_target_found_in_inner_loop(self):
-    #         self.visit(SIMPLE_NESTED)
-    #         self.assertEqual(self.loop_visitor.loop_environments[0].child.target, "b", "Target found was not b")
+    def test_target_found_in_inner_loop(self):
+            self.visit(SIMPLE_NESTED)
+            self.assertEqual(self.loop_visitor.loop_environments[0].child.target, "b", "Target found was not b")
         
     def visit(self, source):
             self.loop_visitor.visit(ast.parse(source))
