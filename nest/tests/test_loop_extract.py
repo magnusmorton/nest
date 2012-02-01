@@ -91,10 +91,6 @@ class LoopEnvironmentTest(unittest.TestCase):
     def setUp(self):
         self.env = nest.loop.LoopEnvironment(0)
     
-    def test_single_increased_nesting(self):
-        self.env.increase_nesting()
-        assert self.env.nesting_depth == 1, "Wrong nesting depth detected"
-        
     def test_unincreased_nest_level_is_0(self):
         assert self.env.nesting_depth == 0, "Nesting detected when not present"
         
