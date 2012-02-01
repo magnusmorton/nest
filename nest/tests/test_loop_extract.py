@@ -32,6 +32,12 @@ for i in range(5):
     i*1
 """
 
+NESTED_RANGE = """
+for i in range(5):
+    for j in range(6):
+        i*j
+"""
+
 
 NON_LOOP_STATEMENT = "print(a)"
     
@@ -70,6 +76,10 @@ class LoopVistitorTests(unittest.TestCase):
     def test_upper_bound_found_when_range_5(self):
         self.visit(SIMPLE_RANGE_5)
         self.assertEqual(self.loop_visitor.loop_environments[0].upper_bound, 4, "Detected upper bound was not 4")
+        
+    def test_upper_bound_found_in_inner_loop(self):
+        self.visit(NESTED_RANGE)
+        self.assertEqual(self.loop_visitor.loop_environments[0].child.upper_bound, 5, "Detected upper bound was not 5")
                                             
     def test_target_found_in_simple_case(self):
         self.visit(SIMPLE_LOOP)
@@ -80,11 +90,11 @@ class LoopVistitorTests(unittest.TestCase):
         self.assertEqual(self.loop_visitor.loop_environments[0].target, "a", "Target found was not a")
         
     def test_target_found_in_inner_loop(self):
-            self.visit(SIMPLE_NESTED)
-            self.assertEqual(self.loop_visitor.loop_environments[0].child.target, "b", "Target found was not b")
+        self.visit(SIMPLE_NESTED)
+        self.assertEqual(self.loop_visitor.loop_environments[0].child.target, "b", "Target found was not b")
         
     def visit(self, source):
-            self.loop_visitor.visit(ast.parse(source))
+        self.loop_visitor.visit(ast.parse(source))
   
         
 class LoopEnvironmentTest(unittest.TestCase):

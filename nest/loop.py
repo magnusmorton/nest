@@ -42,7 +42,7 @@ class LoopVisitor(ast.NodeVisitor):
             self.current_loop_environment = LoopEnvironment(get_upper_bound(node.iter), node.target.id)
             top = True
         else:
-            self.current_loop_environment.append_child(LoopEnvironment(None, node.target.id))
+            self.current_loop_environment.append_child(LoopEnvironment(get_upper_bound(node.iter), node.target.id))
         super(LoopVisitor, self).generic_visit(node)
         if top:
             self._loop_environments.append(self.current_loop_environment)
