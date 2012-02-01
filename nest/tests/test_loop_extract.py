@@ -78,10 +78,14 @@ class LoopVistitorTests(unittest.TestCase):
     def test_target_found_when_name_not_i(self):
         self.visit(SIMPLE_NESTED)
         self.assertEqual(self.loop_visitor.loop_environments[0].target, "a", "Target found was not a")
-
+        
+    # def test_target_found_in_inner_loop(self):
+    #         self.visit(SIMPLE_NESTED)
+    #         self.assertEqual(self.loop_visitor.loop_environments[0].child.target, "b", "Target found was not b")
+        
     def visit(self, source):
-        self.loop_visitor.visit(ast.parse(source))
-
+            self.loop_visitor.visit(ast.parse(source))
+  
         
 class LoopEnvironmentTest(unittest.TestCase):
     def setUp(self):
@@ -93,6 +97,11 @@ class LoopEnvironmentTest(unittest.TestCase):
         
     def test_unincreased_nest_level_is_0(self):
         assert self.env.nesting_depth == 0, "Nesting detected when not present"
+        
+    def test_append_child_adds_child(self):
+        child = nest.loop.LoopEnvironment()
+        self.env.append_child(child)
+        self.assertEqual(self.env.child, child, "Child not found")
         
         
 class HelperTests(unittest.TestCase):

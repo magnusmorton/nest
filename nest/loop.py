@@ -50,10 +50,11 @@ class LoopVisitor(ast.NodeVisitor):
 
 class LoopEnvironment(object):
     
-    def __init__(self, bound, target=None):
+    def __init__(self, bound=0, target=None):
         self._nesting_depth = 0
         self._upper_bound = bound
         self._target = target
+        self._child = None
     
     @property
     def nesting_depth(self):
@@ -69,3 +70,11 @@ class LoopEnvironment(object):
     @property
     def target(self):
         return self._target
+    
+    @property
+    def child(self):
+        return self._child
+        
+    def append_child(self, child):
+        self._child = child
+        
