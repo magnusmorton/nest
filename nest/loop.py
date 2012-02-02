@@ -5,6 +5,10 @@ def get_upper_bound(iterator):
     visitor.visit(iterator)
     return visitor.upper_bound
     
+def get_lower_bound(iterator):
+    # visitor = BoundsVisitor()
+    #     visitor.visit(iterator)
+    return 0
     
 class BoundsVisitor(ast.NodeVisitor):
     
@@ -19,7 +23,10 @@ class BoundsVisitor(ast.NodeVisitor):
     
     def visit_Call(self, node):
         if node.func.id == "range":
-            self._upper_bound = node.args[0].n - 1
+            if len(node.args) > 1:
+                self._upper_bound = node.args[1].n -1
+            else:
+                self._upper_bound = node.args[0].n - 1
 
 class LoopVisitor(ast.NodeVisitor):
     
