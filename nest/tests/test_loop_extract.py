@@ -112,7 +112,7 @@ class LoopEnvironmentTest(unittest.TestCase):
         self.assertEqual(self.env.child, child, "Child not found")
         
         
-class HelperTests(unittest.TestCase):
+class BoundsTests(unittest.TestCase):
     
     ONE_TEN_RANGE = "range(1,10)"
     def test_get_upper_bound_returns_9_from_range(self):
