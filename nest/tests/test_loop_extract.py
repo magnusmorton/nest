@@ -115,7 +115,7 @@ class HelperTests(unittest.TestCase):
         range_ast = ast.parse("range(10)")
         self.assertEqual(nest.loop.get_upper_bound(range_ast), 9, "Detected upper bound was not 9")
         
-    def test_get_upper_bound_returns_4_from_rage(self):
+    def test_get_upper_bound_returns_4_from_range(self):
         range_ast = ast.parse("range(5)")
         self.assertEqual(nest.loop.get_upper_bound(range_ast), 4, "Detected upper bound was not 4")
         
