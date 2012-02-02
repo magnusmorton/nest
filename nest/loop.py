@@ -6,26 +6,34 @@ def get_upper_bound(iterator):
     return visitor.upper_bound
     
 def get_lower_bound(iterator):
-    # visitor = BoundsVisitor()
-    #     visitor.visit(iterator)
-    return 0
+    visitor = BoundsVisitor()
+    visitor.visit(iterator)
+    return visitor.lower_bound
     
 class BoundsVisitor(ast.NodeVisitor):
     
     def __init__(self):
         super(BoundsVisitor, self ).__init__()
         self._upper_bound = None
+        self._lower_bound = None
     
     @property
     def upper_bound(self):
         """returns upper bound"""
         return self._upper_bound
+        
+    @property
+    def lower_bound(self):
+        """returns the lower bound of the iterator"""
+        return self._lower_bound
     
     def visit_Call(self, node):
         if node.func.id == "range":
             if len(node.args) > 1:
+                self._lower_bound = node.args[0].n
                 self._upper_bound = node.args[1].n -1
             else:
+                self._lower_bound = 0
                 self._upper_bound = node.args[0].n - 1
 
 class LoopVisitor(ast.NodeVisitor):

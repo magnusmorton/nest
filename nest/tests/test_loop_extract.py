@@ -111,6 +111,8 @@ class LoopEnvironmentTest(unittest.TestCase):
         
         
 class HelperTests(unittest.TestCase):
+    
+    ONE_TEN_RANGE = "range(1,10)"
     def test_get_upper_bound_returns_9_from_range(self):
         range_ast = ast.parse("range(10)")
         self.assertEqual(nest.loop.get_upper_bound(range_ast), 9, "Detected upper bound was not 9")
@@ -121,10 +123,14 @@ class HelperTests(unittest.TestCase):
         
     def test_get_lower_bound_returns_0_from_range(self):
         range_ast = ast.parse("range(5)")
-        self.assertEqual(nest.loop.get_lower_bound(range_ast), 0, "Detected upper bound was not 0")
+        self.assertEqual(nest.loop.get_lower_bound(range_ast), 0, "Detected lower bound was not 0")
+        
+    def test_get_lower_bound_from_non_zero_start(self):
+        range_ast = ast.parse(self.ONE_TEN_RANGE)
+        self.assertEqual(nest.loop.get_lower_bound(range_ast), 1, "Detected lower bound was not 1")
         
     def test_get_upper_bound_from_two_arg_range(self):
-        range_ast = ast.parse("range(1,10)")
+        range_ast = ast.parse(self.ONE_TEN_RANGE)
         self.assertEqual(nest.loop.get_upper_bound(range_ast), 9, "Detected upper bound was not 9")
         
         
