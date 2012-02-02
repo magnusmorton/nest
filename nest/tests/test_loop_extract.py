@@ -42,6 +42,8 @@ for i in range(5):
 NON_LOOP_STATEMENT = "print(a)"
     
 class LoopVistitorTests(unittest.TestCase):
+    '''A number of these tests are actually testing functionality tested elsewhere.  Should be changed'''
+    
     def setUp(self):
         self.loop_visitor = nest.loop.LoopVisitor()
         

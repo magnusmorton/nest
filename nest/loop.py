@@ -1,5 +1,7 @@
 import ast
 
+
+"""These methods should go somewhere else"""
 def get_upper_bound(iterator):
     visitor = BoundsVisitor()
     visitor.visit(iterator)
