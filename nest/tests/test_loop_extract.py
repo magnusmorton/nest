@@ -135,5 +135,15 @@ class BoundsTests(unittest.TestCase):
         range_ast = ast.parse(self.ONE_TEN_RANGE)
         self.assertEqual(nest.loop.get_upper_bound(range_ast), 9, "Detected upper bound was not 9")
         
+class ArrayAccessTests(unittest.TestCase):
+    def test_can_extract_simple_access(self):
+        access_ast = ast.parse("a[i]")
+        self.assertEquals(nest.loop.get_array_access_parameter(access_ast), "i", "detected access paramater was not i")
+        
+    def test_can_extract_complex_access(self):
+        access_ast = ast.parse("a[3*i + 2*j - 1]")
+        self.assertEquals(nest.loop.get_array_access_parameter(access_ast), "3 * i + 2 * j - 1", "complex access paramater not found")
+        
+        
         
     
