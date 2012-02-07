@@ -101,7 +101,7 @@ class LoopVistitorTests(unittest.TestCase):
         
 class LoopEnvironmentTest(unittest.TestCase):
     def setUp(self):
-        self.env = nest.loop.LoopEnvironment(0)
+        self.env = nest.loop.LoopEnvironment()
     
     def test_unincreased_nest_level_is_0(self):
         assert self.env.nesting_depth == 0, "Nesting detected when not present"
@@ -110,6 +110,9 @@ class LoopEnvironmentTest(unittest.TestCase):
         child = nest.loop.LoopEnvironment()
         self.env.append_child(child)
         self.assertEqual(self.env.child, child, "Child not found")
+
+    # def test_get_targets_single_nesting(self):
+
         
         
 class BoundsTests(unittest.TestCase):
@@ -135,11 +138,5 @@ class BoundsTests(unittest.TestCase):
         range_ast = ast.parse(self.ONE_TEN_RANGE)
         self.assertEqual(nest.loop.get_upper_bound(range_ast), 9, "Detected upper bound was not 9")
         
-class ArrayAccessTests(unittest.TestCase):
-    def test_can_extract_simple_access(self):
-        access_ast = ast.parse("a[i]")
-        self.assertEquals(nest.loop.get_array_access_parameter(access_ast), "i", "detected access paramater was not i")
-        
-    
-        
+
     
