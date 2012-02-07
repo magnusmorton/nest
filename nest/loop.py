@@ -95,6 +95,14 @@ class LoopEnvironment(object):
     @property
     def target(self):
         return self._target
+
+    @property
+    def all_targets(self):
+        if self._child is None:
+            return [self._target]
+        else:
+            print(self._target)
+            return  [self._target] + self._child.all_targets
     
     @property
     def child(self):

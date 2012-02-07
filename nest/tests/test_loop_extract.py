@@ -111,8 +111,16 @@ class LoopEnvironmentTest(unittest.TestCase):
         self.env.append_child(child)
         self.assertEqual(self.env.child, child, "Child not found")
 
-    # def test_get_targets_single_nesting(self):
+    def test_get_targets_single_nesting(self):
+        env = nest.loop.LoopEnvironment(target="i")
+        self.assertEqual(env.all_targets, ["i"], "targets found was not list containing i")
 
+    def test_get_targets_multiple_nesting(self):
+        env = nest.loop.LoopEnvironment(target="i")
+        env.append_child(nest.loop.LoopEnvironment(target="j"))
+        self.assertEqual(env.all_targets, ["i", "j"], "targets found was not list containing i, j only")
+
+    
         
         
 class BoundsTests(unittest.TestCase):
