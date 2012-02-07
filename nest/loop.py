@@ -12,17 +12,14 @@ def get_lower_bound(iterator):
     visitor.visit(iterator)
     return visitor.lower_bound
     
-def get_array_access_parameter(stmt):
-    """returns the parameter to an array access"""
-    return "i"
+
+# class SubscriptVisitor(ast.NodeVisitor):
     
-class SubscriptVisitor(ast.NodeVisitor):
+#     def __init__(self):
+#         super(BoundsVisitor, self).__init__()
     
-    def __init__(self):
-        super(BoundsVisitor, self).__init__()
-    
-    def visit_Subscript(self):
-        pass
+#     def visit_Subscript(self):
+#         pass
     
 class BoundsVisitor(ast.NodeVisitor):
     

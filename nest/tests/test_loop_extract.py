@@ -140,10 +140,6 @@ class ArrayAccessTests(unittest.TestCase):
         access_ast = ast.parse("a[i]")
         self.assertEquals(nest.loop.get_array_access_parameter(access_ast), "i", "detected access paramater was not i")
         
-    def test_can_extract_complex_access(self):
-        access_ast = ast.parse("a[3*i + 2*j - 1]")
-        self.assertEquals(nest.loop.get_array_access_parameter(access_ast), "3 * i + 2 * j - 1", "complex access paramater not found")
-        
-        
+    
         
     
