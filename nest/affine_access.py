@@ -7,10 +7,13 @@ Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 
 class AffineAccess():
     
+    def __init__(self):
+        self._params = []
+    
     def add_param(self, name):
-        pass
+        self._params += name
         
         
     @property
     def params(self):
-        return ["i"]
+        return self._params
