@@ -24,6 +24,9 @@ class TestAccess(unittest.TestCase):
 	    self.access.add_param("j")
 	    self.assertTrue("i" in self.access.params and "j" in self.access.params, "i and j are not both present")
 	    
+	def add_params(self, *params):
+	    for param in params:
+	        self.access.add_param(param)
     
 if __name__ == '__main__':
 	unittest.main()
