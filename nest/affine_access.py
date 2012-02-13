@@ -12,8 +12,7 @@ class AffineAccess():
     
     def add_param(self, name):
         self._params += name
-        
-        
+           
     @property
     def params(self):
         return self._params
