@@ -16,12 +16,11 @@ class TestAccess(unittest.TestCase):
 		self.access = nest.affine_access.AffineAccess()
 		
 	def test_parameter_extracted(self):
-	    self.access.add_param("i")
+	    self.add_params("i")
 	    self.assertTrue("i" in self.access.params)
 	    
 	def test_multiple_parameters_extractable(self):
-	    self.access.add_param("i")
-	    self.access.add_param("j")
+	    self.add_params("i", "j")
 	    self.assertTrue("i" in self.access.params and "j" in self.access.params, "i and j are not both present")
 	    
 	def add_params(self, *params):
