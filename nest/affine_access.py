@@ -16,3 +16,6 @@ class AffineAccess():
     @property
     def params(self):
         return self._params
+
+    def get_coeff(self, param):
+    	return 1
