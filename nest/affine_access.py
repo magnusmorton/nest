@@ -18,4 +18,4 @@ class AffineAccess():
         return self._params
 
     def get_coeff(self, param):
-    	return 1
+    	return self._params[param]
