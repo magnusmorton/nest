@@ -23,7 +23,7 @@ class TestAccess(unittest.TestCase):
 	    self.add_params("i", "j")
 	    self.assertTrue("i" in self.access.params and "j" in self.access.params, "i and j are not both present")
 	
-	def test_coeff_extractable(self):
+	def test_implicit_coeff_extractable(self):
 	    self.add_params("i")
 	    self.assertEqual(self.access.get_coeff("i"), 1, "coeffecient of i is not 1")
 	        
