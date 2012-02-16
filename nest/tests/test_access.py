@@ -34,6 +34,13 @@ class TestAccess(unittest.TestCase):
 	def add_params(self, *params):
 	    for param in params:
 	        self.access.add_param(param)
+
+
+class TestSubscriptVisitor(unittest.TestCase):
+	def setUp(self):
+		pass
+
+	
     
 if __name__ == '__main__':
 	unittest.main()
