@@ -26,6 +26,10 @@ class TestAccess(unittest.TestCase):
 	def test_implicit_coeff_extractable(self):
 	    self.add_params("i")
 	    self.assertEqual(self.access.get_coeff("i"), 1, "coeffecient of i is not 1")
+
+	# def test_explicit_coeff_extractable(self):
+	# 	self.access.add_param("i", 3)
+	# 	self.assertEqual(self.access.get_coeff("i"), 3, "coeffecient of i is not 3") 
 	        
 	def add_params(self, *params):
 	    for param in params:

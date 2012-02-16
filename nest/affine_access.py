@@ -8,10 +8,10 @@ Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 class AffineAccess():
     
     def __init__(self):
-        self._params = []
+        self._params = {}
     
-    def add_param(self, name):
-        self._params += name
+    def add_param(self, name, coeff=1):
+        self._params[name] = coeff
            
     @property
     def params(self):
