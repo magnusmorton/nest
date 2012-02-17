@@ -51,6 +51,7 @@ class TestAccess(unittest.TestCase):
 class TestSubscriptVisitor(unittest.TestCase):
     
     SIMPLE_ACCESS = "[i]"
+    TWO_ACCESS = "[i + j]"
 
     def setUp(self):
         pass
@@ -62,6 +63,14 @@ class TestSubscriptVisitor(unittest.TestCase):
         expected_access.add_param("i")
         self.assertEqual(visitor.access, expected_access, "detected access was not just 'i'")
 
+    def test_two_paramater_access_detected(self):
+        visitor = SubscriptVisitor()
+        visitor.visit(ast.parse(TestSubscriptVisitor.TWO_ACCESS))
+        expected_access = AffineAccess()
+        expected_access.add_param("i")
+        expected_access.add_param("j")
+        # TODO: in progress
+        #self.assertEqual(visitor.access, expected_access, "detected access was not just 'i' and 'j")
 	
     
 if __name__ == '__main__':
