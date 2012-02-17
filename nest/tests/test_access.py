@@ -9,11 +9,11 @@ Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 
 import unittest
 
-import nest.affine_access
+from nest.affine_access import *
 
 class TestAccess(unittest.TestCase):
     def setUp(self):
-        self.access = nest.affine_access.AffineAccess()
+        self.access = AffineAccess()
 		
     def test_parameter_extracted(self):
         self.add_params("i")
@@ -36,9 +36,13 @@ class TestAccess(unittest.TestCase):
             self.access.add_param(param)
 
 
-class TestSubscriptVisitor(unittest.TestCase):
-    def setUp(self):
-        pass
+#class TestSubscriptVisitor(unittest.TestCase):
+#   
+#    def setUp(self):
+#        pass
+#
+#    def simple_access_detected(self):
+#        
 
 	
     
