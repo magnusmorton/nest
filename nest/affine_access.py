@@ -4,6 +4,7 @@ affine_access.py
 Created by Magnus Morton on 2012-02-12.
 Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 """
+import ast
 
 class AffineAccess():
 
@@ -22,3 +23,17 @@ class AffineAccess():
 
     def __eq__(self, other):
         return self._params == other._params
+
+class SubscriptVisitor(ast.NodeVisitor):
+
+    def __init__(self):
+        super(SubscriptVisitor, self).__init__()
+
+    @property
+    def access(self):
+        access = AffineAccess()
+        access.add_param("i")
+        return access
+
+
+

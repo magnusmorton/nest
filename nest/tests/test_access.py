@@ -51,13 +51,16 @@ class TestAccess(unittest.TestCase):
 class TestSubscriptVisitor(unittest.TestCase):
     
     SIMPLE_ACCESS = "[i]"
+
     def setUp(self):
         pass
 
-    #def simple_access_detected(self):
-        #visitor = SubscriptVisistor()
-        #visitor.visit(ast.parse(SIMPLE_ACCESS))
-        #assertEqual
+    def test_simple_access_detected(self):
+        visitor = SubscriptVisitor()
+        visitor.visit(ast.parse(TestSubscriptVisitor.SIMPLE_ACCESS))
+        expected_access = AffineAccess()
+        expected_access.add_param("i")
+        self.assertEqual(visitor.access, expected_access, "deteceted access was not just 'i'")
 
 	
     
