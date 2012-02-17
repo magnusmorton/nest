@@ -60,7 +60,7 @@ class TestSubscriptVisitor(unittest.TestCase):
         visitor.visit(ast.parse(TestSubscriptVisitor.SIMPLE_ACCESS))
         expected_access = AffineAccess()
         expected_access.add_param("i")
-        self.assertEqual(visitor.access, expected_access, "deteceted access was not just 'i'")
+        self.assertEqual(visitor.access, expected_access, "detected access was not just 'i'")
 
 	
     
