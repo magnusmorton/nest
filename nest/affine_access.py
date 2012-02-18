@@ -29,7 +29,6 @@ class SubscriptVisitor(ast.NodeVisitor):
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
         self._access = AffineAccess()
-        self._access.add_param("i")
 
     @property
     def access(self):
