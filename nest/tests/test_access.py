@@ -16,15 +16,15 @@ class TestAccess(unittest.TestCase):
         self.access = AffineAccess()
 		
     def test_parameter_extracted(self):
-        self.add_params("i")
+        add_params(self.access, "i")
         self.assertTrue("i" in self.access.params)
 	    
     def test_multiple_parameters_extractable(self):
-        self.add_params("i", "j")
+        add_params(self.access, "i", "j")
         self.assertTrue("i" in self.access.params and "j" in self.access.params, "i and j are not both present")
 	
     def test_implicit_coeff_extractable(self):
-        self.add_params("i")
+        add_params(self.access, "i")
         self.assertEqual(self.access.get_coeff("i"), 1, "coeffecient of i is not 1")
 
     def test_explicit_coeff_extractable(self):
@@ -42,10 +42,10 @@ class TestAccess(unittest.TestCase):
         self.access.add_param("i")
         other_access.add_param("j")
         self.assertNotEqual(self.access, other_access, "accesses equal")
-	        
-    def add_params(self, *params):
-        for param in params:
-            self.access.add_param(param)
+
+def add_params(access, *params):
+    for param in params:
+        access.add_param(param)
 
 
 class TestSubscriptVisitor(unittest.TestCase):
@@ -55,20 +55,15 @@ class TestSubscriptVisitor(unittest.TestCase):
 
     def setUp(self):
         self.visitor = SubscriptVisitor()
+        self.expected_access = AffineAccess()
 
     def test_simple_access_detected(self):
         self.visitor.visit(ast.parse(TestSubscriptVisitor.SIMPLE_ACCESS))
-        expected_access = AffineAccess()
-        expected_access.add_param("i")
-        self.assertEqual(self.visitor.access, expected_access, "detected access was not just 'i'")
+        add_params(self.expected_access, "i")
+        self.assertEqual(self.visitor.access, self.expected_access, "detected access was not just 'i'")
 
     def test_two_paramater_access_detected(self):
         self.visitor.visit(ast.parse(TestSubscriptVisitor.TWO_ACCESS))
-        expected_access = AffineAccess()
-        expected_access.add_param("i")
-        expected_access.add_param("j")
-        self.assertEqual(self.visitor.access, expected_access, "detected access was not just 'i' and 'j")
-	
-    
-if __name__ == '__main__':
-	unittest.main()
+        add_params(self.expected_access, "i", "j")
+        self.assertEqual(self.visitor.access, self.expected_access, "detected access was not just 'i' and 'j")
+
