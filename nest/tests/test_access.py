@@ -69,8 +69,7 @@ class TestSubscriptVisitor(unittest.TestCase):
         expected_access = AffineAccess()
         expected_access.add_param("i")
         expected_access.add_param("j")
-        # TODO: in progress
-        #self.assertEqual(visitor.access, expected_access, "detected access was not just 'i' and 'j")
+        self.assertEqual(visitor.access, expected_access, "detected access was not just 'i' and 'j")
 	
     
 if __name__ == '__main__':
