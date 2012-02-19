@@ -34,7 +34,6 @@ class SubscriptVisitor(ast.NodeVisitor):
     def access(self):
         return self._access
         
-        
     def visit_Name(self, node):
         self._access.add_param(node.id)
 
