@@ -45,58 +45,58 @@ class LoopVistitorTests(unittest.TestCase):
     '''A number of these tests are actually testing functionality tested elsewhere.  Should be changed'''
     
     def setUp(self):
-        self.loop_visitor = nest.loop.LoopVisitor()
+        self.visitor = nest.loop.LoopVisitor()
         
     def test_1_loop_found(self):
         self.visit(SIMPLE_LOOP)
-        self.assertEqual(self.loop_visitor.loops_found, 1, "Only one loop should be found")
+        self.assertEqual(self.visitor.loops_found, 1, "Only one loop should be found")
         
     def test_no_loops_found(self):
         self.visit(NON_LOOP_STATEMENT)
-        self.assertEqual(self.loop_visitor.loops_found, 0, "loops found when not present")
+        self.assertEqual(self.visitor.loops_found, 0, "loops found when not present")
         
     def test_two_loops_found(self):
         self.visit(TWO_LOOPS)
-        self.assertEqual(self.loop_visitor.loops_found, 2, "Wrong number of loops found")
+        self.assertEqual(self.visitor.loops_found, 2, "Wrong number of loops found")
     
     def test_inner_loops_of_nest_ignored(self):
         self.visit(SIMPLE_NESTED)
-        self.assertEqual(self.loop_visitor.loops_found, 1, "Nested loop included in total number of loops")
+        self.assertEqual(self.visitor.loops_found, 1, "Nested loop included in total number of loops")
     
     def test_nest_depth_is_0_when_no_nesting(self):
         self.visit(SIMPLE_LOOP)
-        self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 0, "Nesting detected when not present")
+        self.assertEqual(self.visitor.loop_environments[0].nesting_depth, 0, "Nesting detected when not present")
        
     def test_nest_depth_is_1_when_1_nested_loop(self):
         self.visit(SIMPLE_NESTED)
-        self.assertEqual(self.loop_visitor.loop_environments[0].nesting_depth, 1, "Wrong nesting depth detected")
+        self.assertEqual(self.visitor.loop_environments[0].nesting_depth, 1, "Wrong nesting depth detected")
        
     def test_upper_bound_found_when_range_10(self):
         self.visit(SIMPLE_RANGE)
-        self.assertEqual(self.loop_visitor.loop_environments[0].upper_bound, 9, "Detected upper bound was not 9")
+        self.assertEqual(self.visitor.loop_environments[0].upper_bound, 9, "Detected upper bound was not 9")
                                             
     def test_upper_bound_found_when_range_5(self):
         self.visit(SIMPLE_RANGE_5)
-        self.assertEqual(self.loop_visitor.loop_environments[0].upper_bound, 4, "Detected upper bound was not 4")
+        self.assertEqual(self.visitor.loop_environments[0].upper_bound, 4, "Detected upper bound was not 4")
         
     def test_upper_bound_found_in_inner_loop(self):
         self.visit(NESTED_RANGE)
-        self.assertEqual(self.loop_visitor.loop_environments[0].child.upper_bound, 5, "Detected upper bound was not 5")
+        self.assertEqual(self.visitor.loop_environments[0].child.upper_bound, 5, "Detected upper bound was not 5")
                                             
     def test_target_found_in_simple_case(self):
         self.visit(SIMPLE_LOOP)
-        self.assertEqual(self.loop_visitor.loop_environments[0].target, "i", "Target found was not i")
+        self.assertEqual(self.visitor.loop_environments[0].target, "i", "Target found was not i")
 
     def test_target_found_when_name_not_i(self):
         self.visit(SIMPLE_NESTED)
-        self.assertEqual(self.loop_visitor.loop_environments[0].target, "a", "Target found was not a")
+        self.assertEqual(self.visitor.loop_environments[0].target, "a", "Target found was not a")
         
     def test_target_found_in_inner_loop(self):
         self.visit(SIMPLE_NESTED)
-        self.assertEqual(self.loop_visitor.loop_environments[0].child.target, "b", "Target found was not b")
+        self.assertEqual(self.visitor.loop_environments[0].child.target, "b", "Target found was not b")
         
     def visit(self, source):
-        self.loop_visitor.visit(ast.parse(source))
+        self.visitor.visit(ast.parse(source))
   
         
 class LoopEnvironmentTest(unittest.TestCase):
