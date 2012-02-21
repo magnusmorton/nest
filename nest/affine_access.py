@@ -25,11 +25,14 @@ class AffineAccess():
         return self._params == other._params
 
 class SubscriptVisitor(ast.NodeVisitor):
+    
+    (GENERIC,MULT) = range(2)
 
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
         self._access = AffineAccess()
-        self._context = [None,None]
+        self._context = 0
+        self._foundID = None
 
     @property
     def access(self):
@@ -37,18 +40,22 @@ class SubscriptVisitor(ast.NodeVisitor):
         
     def visit_Name(self, node):
         self._access.add_param(node.id)
-        self._context[0] = node.id
+        if self._context == SubscriptVisitor.MULT:
+            self._foundID = node.id
         
     def visit_Num(self, node):
-        self._context[1] = node.n
+        self._found_const = node.n
         
     '''This will blow up when sym constants are involved!!!!'''    
     def visit_BinOp(self, node):
-        coeff = 1
-        self.generic_visit(node)
         if isinstance(node.op,ast.Mult):
-            coeff = self._context[1]
-        self._access.add_param(self._context[0], coeff)
+            self._context = SubscriptVisitor.MULT
+        else:
+            self._context = SubscriptVisitor.GENERIC
+        self.generic_visit(node)
+        if self._foundID:
+            self._access.add_param(self._foundID, self._found_const)
+            
 
 
 
