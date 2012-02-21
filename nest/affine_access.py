@@ -46,7 +46,7 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_Num(self, node):
         self._found_const = node.n
         
-    '''This will blow up when sym constants are involved!!!!'''    
+    '''This will blow up when sym constants are involved!!!! (Right now, contants too)'''    
     def visit_BinOp(self, node):
         if isinstance(node.op,ast.Mult):
             self._context = SubscriptVisitor.MULT
