@@ -8,6 +8,7 @@ Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 """
 
 import unittest
+from nest.tests.visitor_helper import VisitorHelper
 
 from nest.affine_access import *
 
@@ -48,7 +49,7 @@ def add_params(access, *params):
         access.add_param(param)
 
 
-class TestSubscriptVisitor(unittest.TestCase):
+class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     
     SIMPLE_ACCESS = "[i]"
     TWO_ACCESS = "[i + j]"
@@ -58,12 +59,12 @@ class TestSubscriptVisitor(unittest.TestCase):
         self.expected_access = AffineAccess()
 
     def test_simple_access_detected(self):
-        self.visitor.visit(ast.parse(TestSubscriptVisitor.SIMPLE_ACCESS))
+        self.visit(TestSubscriptVisitor.SIMPLE_ACCESS)
         add_params(self.expected_access, "i")
         self.assertEqual(self.visitor.access, self.expected_access, "detected access was not just 'i'")
 
     def test_two_paramater_access_detected(self):
-        self.visitor.visit(ast.parse(TestSubscriptVisitor.TWO_ACCESS))
+        self.visit(TestSubscriptVisitor.TWO_ACCESS)
         add_params(self.expected_access, "i", "j")
         self.assertEqual(self.visitor.access, self.expected_access, "detected access was not just 'i' and 'j")
         
