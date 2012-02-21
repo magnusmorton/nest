@@ -66,4 +66,7 @@ class TestSubscriptVisitor(unittest.TestCase):
         self.visitor.visit(ast.parse(TestSubscriptVisitor.TWO_ACCESS))
         add_params(self.expected_access, "i", "j")
         self.assertEqual(self.visitor.access, self.expected_access, "detected access was not just 'i' and 'j")
+        
+    # def test_coeff_extract(self):
+    #         self.visist
 
