@@ -1,6 +1,7 @@
 import nest.loop
 import ast
 import unittest
+import nest.tests.visitor_helper
 
 SIMPLE_LOOP = """
 for i in [1,2,3]:
@@ -41,7 +42,7 @@ for i in range(5):
 
 NON_LOOP_STATEMENT = "print(a)"
     
-class LoopVistitorTests(unittest.TestCase):
+class LoopVistitorTests(unittest.TestCase, nest.tests.visitor_helper.VisitorHelper):
     '''A number of these tests are actually testing functionality tested elsewhere.  Should be changed'''
     
     def setUp(self):
@@ -95,8 +96,8 @@ class LoopVistitorTests(unittest.TestCase):
         self.visit(SIMPLE_NESTED)
         self.assertEqual(self.visitor.loop_environments[0].child.target, "b", "Target found was not b")
         
-    def visit(self, source):
-        self.visitor.visit(ast.parse(source))
+    # def visit(self, source):
+    #         self.visitor.visit(ast.parse(source))
   
         
 class LoopEnvironmentTest(unittest.TestCase):
