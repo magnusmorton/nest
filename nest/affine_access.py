@@ -29,6 +29,7 @@ class SubscriptVisitor(ast.NodeVisitor):
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
         self._access = AffineAccess()
+        self._context = [None,None]
 
     @property
     def access(self):
@@ -36,6 +37,18 @@ class SubscriptVisitor(ast.NodeVisitor):
         
     def visit_Name(self, node):
         self._access.add_param(node.id)
+        self._context[0] = node.id
+        
+    def visit_Num(self, node):
+        self._context[1] = node.n
+        
+    '''This will blow up when sym constants are involved!!!!'''    
+    def visit_BinOp(self, node):
+        coeff = 1
+        self.generic_visit(node)
+        if isinstance(node.op,ast.Mult):
+            coeff = self._context[1]
+        self._access.add_param(self._context[0], coeff)
 
 
 

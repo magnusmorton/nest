@@ -53,6 +53,7 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     
     SIMPLE_ACCESS = "[i]"
     TWO_ACCESS = "[i + j]"
+    SIMPLE_COEFF = "[2*i]"
 
     def setUp(self):
         self.visitor = SubscriptVisitor()
@@ -68,6 +69,8 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
         add_params(self.expected_access, "i", "j")
         self.assertEqual(self.visitor.access, self.expected_access, "detected access was not just 'i' and 'j")
         
-    # def test_coeff_extract(self):
-    #         self.visist
+    def test_coeff_extract(self):
+        self.visit(TestSubscriptVisitor.SIMPLE_COEFF)
+        self.expected_access.add_param("i", 2)
+        self.assertEqual(self.visitor.access, self.expected_access, "detected access did not have i with coeff of 2")
 
