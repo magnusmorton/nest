@@ -1,7 +1,7 @@
 import nest.loop
 import ast
 import unittest
-import nest.tests.visitor_helper
+from nest.tests.visitor_helper import VisitorHelper
 
 SIMPLE_LOOP = """
 for i in [1,2,3]:
@@ -42,7 +42,7 @@ for i in range(5):
 
 NON_LOOP_STATEMENT = "print(a)"
     
-class LoopVistitorTests(unittest.TestCase, nest.tests.visitor_helper.VisitorHelper):
+class LoopVistitorTests(unittest.TestCase, VisitorHelper):
     '''A number of these tests are actually testing functionality tested elsewhere.  Should be changed'''
     
     def setUp(self):
