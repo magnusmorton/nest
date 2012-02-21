@@ -96,9 +96,6 @@ class LoopVistitorTests(unittest.TestCase, nest.tests.visitor_helper.VisitorHelp
         self.visit(SIMPLE_NESTED)
         self.assertEqual(self.visitor.loop_environments[0].child.target, "b", "Target found was not b")
         
-    # def visit(self, source):
-    #         self.visitor.visit(ast.parse(source))
-  
         
 class LoopEnvironmentTest(unittest.TestCase):
     def setUp(self):
