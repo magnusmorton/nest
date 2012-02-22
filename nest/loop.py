@@ -12,15 +12,6 @@ def get_lower_bound(iterator):
     visitor.visit(iterator)
     return visitor.lower_bound
     
-
-# class SubscriptVisitor(ast.NodeVisitor):
-    
-#     def __init__(self):
-#         super(BoundsVisitor, self).__init__()
-    
-#     def visit_Subscript(self):
-#         pass
-    
 class BoundsVisitor(ast.NodeVisitor):
     
     def __init__(self):
