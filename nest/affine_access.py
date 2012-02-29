@@ -2,7 +2,7 @@
 affine_access.py
 
 Created by Magnus Morton on 2012-02-12.
-Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+Copyright (c) 2012 Magnus Morton. All rights reserved.
 """
 import ast
 
@@ -46,7 +46,7 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_Num(self, node):
         self._found_const = node.n
         
-    '''This will blow up when sym constants are involved!!!! (Right now, contants too)'''    
+    '''This will blow up when sym constants are involved!!!! (Right now, constants too)'''    
     def visit_BinOp(self, node):
         if isinstance(node.op,ast.Mult):
             self._context = SubscriptVisitor.MULT
