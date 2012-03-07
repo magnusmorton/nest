@@ -55,6 +55,7 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     TWO_ACCESS = "[i + j]"
     SIMPLE_COEFF = "[2*i]"
     TWO_COEFF    = "[2*i + 3*j]"
+    SIMPLE_MINUS = "[-i]"
 
     def setUp(self):
         self.visitor = SubscriptVisitor()
@@ -80,4 +81,9 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
         self.expected_access.add_param("i", 2)
         self.expected_access.add_param("j", 3)
         self.assertEqual(self.visitor.access, self.expected_access, "both coefficients not extracted")
+        
+    def test_simple_minus(self):
+        self.visit(TestSubscriptVisitor.SIMPLE_MINUS)
+        self.expected_access.add_param("i", -1)
+        assert self.visitor.access == self.expected_access, "negative coeff not extracted"
 
