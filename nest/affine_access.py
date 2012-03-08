@@ -43,7 +43,6 @@ class SubscriptVisitor(ast.NodeVisitor):
         if self._context == SubscriptVisitor.MULT:
             self._foundID = node.id
         if self._context == SubscriptVisitor.NEG:
-            print("HELLO")
             self._foundID = node.id
             self._found_const = -1
         
