@@ -42,7 +42,7 @@ class SubscriptVisitor(ast.NodeVisitor):
         self._access.add_param(node.id)
         if self._context == SubscriptVisitor.MULT:
             self._foundID = node.id
-        if self._context == SubscriptVisitor.NEG:
+        if self._context == SubscriptVisitor.NEG or self._context == SubscriptVisitor.SUB: 
             self._foundID = node.id
             self._found_const = -1
         
@@ -53,6 +53,8 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_BinOp(self, node):
         if isinstance(node.op,ast.Mult):
             self._context = SubscriptVisitor.MULT
+        elif isinstance(node.op, ast.Sub):
+            self._context = SubscriptVisitor.SUB
         else:
             self._context = SubscriptVisitor.GENERIC
         self.generic_visit(node)
