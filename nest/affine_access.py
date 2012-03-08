@@ -31,7 +31,6 @@ class SubscriptVisitor(ast.NodeVisitor):
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
         self._access = AffineAccess()
-        self._context = 0
         self._foundID = None
         self._context_stack = []
 
@@ -46,7 +45,7 @@ class SubscriptVisitor(ast.NodeVisitor):
         self._access.add_param(node.id)
         if context == SubscriptVisitor.MULT:
             self._foundID = node.id
-        if context == SubscriptVisitor.NEG or self._context == SubscriptVisitor.SUB: 
+        if context == SubscriptVisitor.NEG or context == SubscriptVisitor.SUB: 
             self._foundID = node.id
             self._found_const = -1
         
@@ -60,13 +59,10 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_BinOp(self, node):
         if isinstance(node.op,ast.Mult):
             self._context_stack.append(SubscriptVisitor.MULT)
-            self._context = SubscriptVisitor.MULT
         elif isinstance(node.op, ast.Sub):
             self._context_stack.append(SubscriptVisitor.SUB)
-            self._context = SubscriptVisitor.SUB
         else:
             self._context_stack.append(SubscriptVisitor.GENERIC)
-            self._context = SubscriptVisitor.GENERIC
         self.generic_visit(node)
         self._context_stack.pop()
         if self._foundID:
@@ -75,7 +71,6 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_UnaryOp(self, node):
         if isinstance(node.op, ast.USub):
             self._context_stack.append(SubscriptVisitor.NEG)
-            self._context = SubscriptVisitor.NEG
         self.generic_visit(node)
         self._context_stack.pop()
         if self._foundID:
