@@ -52,18 +52,15 @@ class SubscriptVisitor(ast.NodeVisitor):
         
     def visit_Num(self, node):
         if self._context_stack[len(self._context_stack)-1] == SubscriptVisitor.NEG:
-            print("HELLOOOOOO")
             self._found_const = -node.n
         else:
             self._found_const = node.n
-        print(self._found_const)
         
     '''This will blow up when sym constants are involved!!!! (Right now, constants too)'''    
     def visit_BinOp(self, node):
         if isinstance(node.op,ast.Mult):
             self._context_stack.append(SubscriptVisitor.MULT)
             self._context = SubscriptVisitor.MULT
-            print("before HELLOOOOO")
         elif isinstance(node.op, ast.Sub):
             self._context_stack.append(SubscriptVisitor.SUB)
             self._context = SubscriptVisitor.SUB
@@ -73,7 +70,6 @@ class SubscriptVisitor(ast.NodeVisitor):
         self.generic_visit(node)
         self._context_stack.pop()
         if self._foundID:
-            print(self._found_const)
             self._access.add_param(self._foundID, self._found_const)
             
     def visit_UnaryOp(self, node):
