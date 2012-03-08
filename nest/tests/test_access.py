@@ -57,6 +57,7 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     TWO_COEFF    = "[2*i + 3*j]"
     SIMPLE_MINUS = "[-i]"
     TWO_MINUS    = "[i - j]"
+    SIMPLE_COEFF_MINUS = "[-2*i]"
 
     def setUp(self):
         self.visitor = SubscriptVisitor()
@@ -93,5 +94,11 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
         self.expected_access.add_param("i")
         self.expected_access.add_param("j", -1)
         assert self.visitor.access == self.expected_access, "negative coeff of j not extracted"
+        
+    def test_simple_minus_with_coeff(self):
+        """tests extracting a negative coefficient"""
+        self.visit(TestSubscriptVisitor.SIMPLE_COEFF_MINUS)
+        self.expected_access.add_param("i", -2)
+        assert self.visitor.access == self.expected_access, "coeff of i not -2"
         
 
