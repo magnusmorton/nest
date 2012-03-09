@@ -104,7 +104,7 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     
     def test__minus_with_two_coeff(self):
         """tests extracting a negative coefficient"""
-        self.visit(TestSubscriptVisitor.SIMPLE_COEFF_MINUS)
+        self.visit(TestSubscriptVisitor.TWO_COEFF_MINUS)
         self.expected_access.add_param("i", 3)
         self.expected_access.add_param("j", -2)
         self.assertEqual(self.visitor.access,self.expected_access, "coeff of j not -2")        
