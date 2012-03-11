@@ -60,7 +60,7 @@ class SubscriptVisitor(ast.NodeVisitor):
         self._access.add_param(node.id)
         if context == SubscriptVisitor.MULT:
             self._foundID = node.id
-        if context == SubscriptVisitor.NEG or context == SubscriptVisitor.SUB: 
+        if context == SubscriptVisitor.NEG: #or context == SubscriptVisitor.SUB: 
             self._foundID = node.id
             self._found_const = -1
         
@@ -76,6 +76,7 @@ class SubscriptVisitor(ast.NodeVisitor):
             self._context_stack.append(SubscriptVisitor.MULT)
         elif isinstance(node.op, ast.Sub):
             self._context_stack.append(SubscriptVisitor.SUB)
+            #self.visit(node.left)
         else:
             self._context_stack.append(SubscriptVisitor.GENERIC)
         self.generic_visit(node)
