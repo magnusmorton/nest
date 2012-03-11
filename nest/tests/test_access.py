@@ -87,10 +87,10 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
         with self.assertRaises(AffineError):
             self.visit(TestSubscriptVisitor.FLOAT_ACCESS)
             
-    # def test_right_mult(self):
-    #         self.visit(TestSubscriptVisitor.RIGHT_MULT)
-    #         self.assertEqual(self.visitor.access, )
-    #             
+    def test_right_mult(self):
+       self.visit(TestSubscriptVisitor.RIGHT_MULT)
+       self.assertEqual(self.visitor.access, {'i': 2}, "constant on right side of mult expression does not work")
+                    
         
 class TestHelperMethods(unittest.TestCase):
     
