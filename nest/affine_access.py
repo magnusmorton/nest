@@ -95,6 +95,9 @@ class SubscriptVisitor(ast.NodeVisitor):
         
 def dict_multiply(value, dictionary):
     return {k:value*v for k,v in dictionary.items() }
+    
+def dict_add(left, right):
+    return {k:v + right[k] for k,v in left.items()}
         
         
             
