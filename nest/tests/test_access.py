@@ -78,7 +78,7 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
         self.assertEqual(self.visitor.access,{'i':3, 'j':-2}, "coeff of j not -2")    
         
     def test_div_access_throws_exception(self):
-        with self.assertRaises(NonAffineException):
+        with self.assertRaises(AffineError):
             self.visit(TestSubscriptVisitor.DIV_ACCESS)
         
 class TestHelperMethods(unittest.TestCase):
