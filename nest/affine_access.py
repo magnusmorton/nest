@@ -21,23 +21,6 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 """
 import ast
 
-class AffineAccess():
-
-    def __init__(self):
-        self._params = {}
-
-    def add_param(self, name, coeff=1):
-        self._params[name] = coeff
-
-    @property
-    def params(self):
-        return self._params
-
-    def get_coeff(self, param):
-    	return self._params[param]
-
-    def __eq__(self, other):
-        return self._params == other._params
 
 class SubscriptVisitor(ast.NodeVisitor):
     
@@ -45,7 +28,7 @@ class SubscriptVisitor(ast.NodeVisitor):
 
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
-        self._access = AffineAccess()
+        self._access = {}
         self._foundID = None
         self._context_stack = []
 
@@ -53,44 +36,30 @@ class SubscriptVisitor(ast.NodeVisitor):
     def access(self):
         return self._access
         
+    def visit_Index(self, node):
+        self._access = self.visit(node.value)
+        
     def visit_Name(self, node):
-        context = None
-        if self._context_stack:
-            context = self._context_stack[len(self._context_stack)-1]
-        self._access.add_param(node.id)
-        if context == SubscriptVisitor.MULT:
-            self._foundID = node.id
-        if context == SubscriptVisitor.NEG: #or context == SubscriptVisitor.SUB: 
-            self._foundID = node.id
-            self._found_const = -1
+        return {node.id:1}
         
     def visit_Num(self, node):
-        if self._context_stack[len(self._context_stack)-1] == SubscriptVisitor.NEG:
-            self._found_const = -node.n
-        else:
-            self._found_const = node.n
-        
-    '''This will blow up when sym constants are involved!!!! (Right now, constants too)'''    
+        return {'const': node.n}
+          
     def visit_BinOp(self, node):
+        left_result = self.visit(node.left)
+        right_result = self.visit(node.right)
         if isinstance(node.op,ast.Mult):
-            self._context_stack.append(SubscriptVisitor.MULT)
+            return dict_multiply(left_result['const'], right_result)
+        elif isinstance(node.op, ast.Add):
+            return dict_add(left_result, right_result)
         elif isinstance(node.op, ast.Sub):
-            self._context_stack.append(SubscriptVisitor.SUB)
-            #self.visit(node.left)
-        else:
-            self._context_stack.append(SubscriptVisitor.GENERIC)
-        self.generic_visit(node)
-        self._context_stack.pop()
-        if self._foundID:
-            self._access.add_param(self._foundID, self._found_const)
+            return dict_add(left_result, dict_multiply(-1, right_result))
             
     def visit_UnaryOp(self, node):
+        result = self.visit(node.operand)
         if isinstance(node.op, ast.USub):
-            self._context_stack.append(SubscriptVisitor.NEG)
-        self.generic_visit(node)
-        self._context_stack.pop()
-        if self._foundID:
-            self._access.add_param(self._foundID, self._found_const)
+            return dict_multiply(-1, result)
+        
         
         
 def dict_multiply(value, dictionary):
