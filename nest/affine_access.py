@@ -49,16 +49,19 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_BinOp(self, node):
         left_result = self.visit(node.left)
         right_result = self.visit(node.right)
+        out = {}
         if isinstance(node.op,ast.Mult):
             if SubscriptVisitor.CONST_KEY not in left_result:
-                return dict_multiply(right_result[SubscriptVisitor.CONST_KEY], left_result)
-            return dict_multiply(left_result[SubscriptVisitor.CONST_KEY], right_result)
+                out =  dict_multiply(right_result[SubscriptVisitor.CONST_KEY], left_result)
+            else:
+                out = dict_multiply(left_result[SubscriptVisitor.CONST_KEY], right_result)
         elif isinstance(node.op, ast.Add):
-            return dict_add(left_result, right_result)
+            out =  dict_add(left_result, right_result)
         elif isinstance(node.op, ast.Sub):
-            return dict_add(left_result, dict_multiply(-1, right_result))
+            out = dict_add(left_result, dict_multiply(-1, right_result))
         else:
             raise AffineError
+        return out
             
     def visit_UnaryOp(self, node):
         result = self.visit(node.operand)
