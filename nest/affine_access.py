@@ -48,6 +48,8 @@ class SubscriptVisitor(ast.NodeVisitor):
         left_result = self.visit(node.left)
         right_result = self.visit(node.right)
         if isinstance(node.op,ast.Mult):
+            if 'const' not in left_result:
+                return dict_multiply(right_result['const'], left_result)
             return dict_multiply(left_result['const'], right_result)
         elif isinstance(node.op, ast.Add):
             return dict_add(left_result, right_result)
