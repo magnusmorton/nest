@@ -93,8 +93,8 @@ class SubscriptVisitor(ast.NodeVisitor):
             self._access.add_param(self._foundID, self._found_const)
         
         
-def dict_multiply(value, hash):
-    return {'a':2, 'b':4}
+def dict_multiply(value, dictionary):
+    return {k:value*v for k,v in dictionary.items() }
         
         
             
