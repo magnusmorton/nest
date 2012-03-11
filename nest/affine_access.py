@@ -97,7 +97,16 @@ def dict_multiply(value, dictionary):
     return {k:value*v for k,v in dictionary.items() }
     
 def dict_add(left, right):
-    return {k:v + right[k] for k,v in left.items()}
+    output = {}
+    for key in left.keys():
+        if key in right:
+            output[key] = left[key] + right[key] 
+        else:
+            output[key] = left[key]
+    for key in right.keys():
+        if key not in output:
+            output[key] = right[key]
+    return output
         
         
             
