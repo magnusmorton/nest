@@ -63,7 +63,6 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
         self.assertEqual(self.visitor.access,{'i':-1}, "negative coeff not extracted")
         
     def test_two_minus(self):
-        return  #not yet implemented
         self.visit(TestSubscriptVisitor.TWO_MINUS)
         self.assertEqual(self.visitor.access,{'i':1, 'j':-1}, "negative coeff of j not extracted")
         
@@ -74,7 +73,6 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     
     def test__minus_with_two_coeff(self):
         """tests extracting a negative coefficient"""
-        return #not yet implemented
         self.visit(TestSubscriptVisitor.TWO_COEFF_MINUS)
         self.assertEqual(self.visitor.access,{'i':3, 'j':-2}, "coeff of j not -2")    
         
@@ -87,4 +85,8 @@ class TestHelperMethods(unittest.TestCase):
     def test_dict_multiply_three_elms_by_three(self):
         a = {'a':1, 'b':2, 'c':4}
         self.assertEqual({'a':3, 'b':6, 'c':12}, dict_multiply(3,a), "values not multiplied")
+        
+    def test_dict_add_simple(self):
+        test_dict = {'a':1}
+        self.assertEqual({'a':2}, dict_add(test_dict,test_dict),'a is not added to itself')
 
