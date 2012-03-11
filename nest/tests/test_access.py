@@ -81,50 +81,39 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
 
     def test_simple_access_detected(self):
         self.visit(TestSubscriptVisitor.SIMPLE_ACCESS)
-        add_params(self.expected_access, "i")
-        self.assertEqual(self.visitor.access, self.expected_access, "detected access was not just 'i'")
+        self.assertEqual(self.visitor.access, {'i':1}, "detected access was not just 'i'")
 
     def test_two_paramater_access_detected(self):
         self.visit(TestSubscriptVisitor.TWO_ACCESS)
-        add_params(self.expected_access, "i", "j")
-        self.assertEqual(self.visitor.access, self.expected_access, "detected access was not just 'i' and 'j")
+        self.assertEqual(self.visitor.access, {'i':1, 'j':1}, "detected access was not just 'i' and 'j")
         
     def test_coeff_extract(self):
         self.visit(TestSubscriptVisitor.SIMPLE_COEFF)
-        self.expected_access.add_param("i", 2)
-        self.assertEqual(self.visitor.access, self.expected_access, "detected access did not have i with coeff of 2")
+        self.assertEqual(self.visitor.access, {'i':2}, "detected access did not have i with coeff of 2")
         
     def test_two_coeff_extract(self):
         self.visit(TestSubscriptVisitor.TWO_COEFF)
-        self.expected_access.add_param("i", 2)
-        self.expected_access.add_param("j", 3)
-        self.assertEqual(self.visitor.access, self.expected_access, "both coefficients not extracted")
+        self.assertEqual(self.visitor.access, {'i':2, 'j':3}, "both coefficients not extracted")
         
     def test_simple_minus(self):
         self.visit(TestSubscriptVisitor.SIMPLE_MINUS)
-        self.expected_access.add_param("i", -1)
-        self.assertEqual(self.visitor.access,self.expected_access, "negative coeff not extracted")
+        self.assertEqual(self.visitor.access,{'i':-1}, "negative coeff not extracted")
         
     def test_two_minus(self):
         return  #not yet implemented
         self.visit(TestSubscriptVisitor.TWO_MINUS)
-        self.expected_access.add_param("i")
-        self.expected_access.add_param("j", -1)
-        self.assertEqual(self.visitor.access,self.expected_access, "negative coeff of j not extracted")
+        self.assertEqual(self.visitor.access,{'i':1, 'j':-1}, "negative coeff of j not extracted")
         
     def test_simple_minus_with_coeff(self):
         """tests extracting a negative coefficient"""
         self.visit(TestSubscriptVisitor.SIMPLE_COEFF_MINUS)
-        self.expected_access.add_param("i", -2)
-        self.assertEqual(self.visitor.access,self.expected_access, "coeff of i not -2")
+        self.assertEqual(self.visitor.access,{'i':-2}, "coeff of i not -2")
     
     def test__minus_with_two_coeff(self):
         """tests extracting a negative coefficient"""
         return #not yet implemented
         self.visit(TestSubscriptVisitor.TWO_COEFF_MINUS)
-        self.expected_access.add_param("i", 3)
-        self.expected_access.add_param("j", -2)
-        self.assertEqual(self.visitor.access,self.expected_access, "coeff of j not -2")    
+        self.assertEqual(self.visitor.access,{'i':3, 'j':-2}, "coeff of j not -2")    
         
 class TestHelperMethods(unittest.TestCase):
     
