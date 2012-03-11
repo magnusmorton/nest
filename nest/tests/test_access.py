@@ -27,57 +27,20 @@ from nest.tests.visitor_helper import VisitorHelper
 
 from nest.affine_access import *
 
-class TestAccess(unittest.TestCase):
-    def setUp(self):
-        self.access = AffineAccess()
-		
-    def test_parameter_extracted(self):
-        add_params(self.access, "i")
-        self.assertTrue("i" in self.access.params)
-	    
-    def test_multiple_parameters_extractable(self):
-        add_params(self.access, "i", "j")
-        self.assertTrue("i" in self.access.params and "j" in self.access.params, "i and j are not both present")
-	
-    def test_implicit_coeff_extractable(self):
-        add_params(self.access, "i")
-        self.assertEqual(self.access.get_coeff("i"), 1, "coeffecient of i is not 1")
-
-    def test_explicit_coeff_extractable(self):
-        self.access.add_param("i", 3)
-        self.assertEqual(self.access.get_coeff("i"), 3, "coeffecient of i is not 3")
-
-    def test_eq_true_when_equal(self):
-        other_access = AffineAccess()
-        self.access.add_param("i")
-        other_access.add_param("i")
-        self.assertEqual(self.access, other_access, "accesses not equal")
-
-    def test_eq_false_when_not_equal(self):
-        other_access = AffineAccess()
-        self.access.add_param("i")
-        other_access.add_param("j")
-        self.assertNotEqual(self.access, other_access, "accesses equal")
-
-def add_params(access, *params):
-    for param in params:
-        access.add_param(param)
-
 
 class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     
-    SIMPLE_ACCESS = "[i]"
-    TWO_ACCESS = "[i + j]"
-    SIMPLE_COEFF = "[2*i]"
-    TWO_COEFF    = "[2*i + 3*j]"
-    SIMPLE_MINUS = "[-i]"
-    TWO_MINUS    = "[i - j]"
-    SIMPLE_COEFF_MINUS = "[-2*i]"
-    TWO_COEFF_MINUS    = "[3*i - 2*j]"
+    SIMPLE_ACCESS = "a[i]"
+    TWO_ACCESS = "a[i + j]"
+    SIMPLE_COEFF = "a[2*i]"
+    TWO_COEFF    = "a[2*i + 3*j]"
+    SIMPLE_MINUS = "a[-i]"
+    TWO_MINUS    = "a[i - j]"
+    SIMPLE_COEFF_MINUS = "a[-2*i]"
+    TWO_COEFF_MINUS    = "a[3*i - 2*j]"
 
     def setUp(self):
         self.visitor = SubscriptVisitor()
-        self.expected_access = AffineAccess()
 
     def test_simple_access_detected(self):
         self.visit(TestSubscriptVisitor.SIMPLE_ACCESS)
