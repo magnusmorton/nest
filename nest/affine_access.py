@@ -51,12 +51,17 @@ class SubscriptVisitor(ast.NodeVisitor):
             return dict_add(left_result, right_result)
         elif isinstance(node.op, ast.Sub):
             return dict_add(left_result, dict_multiply(-1, right_result))
+        else:
+            raise AffineError
             
     def visit_UnaryOp(self, node):
         result = self.visit(node.operand)
         if isinstance(node.op, ast.USub):
             return dict_multiply(-1, result)
-        
+
+class AffineError(Exception):
+    """Thrown when the Access is not obviously affine"""
+    pass
         
         
 def dict_multiply(value, dictionary):
