@@ -95,4 +95,8 @@ class TestHelperMethods(unittest.TestCase):
         right = {'a':3, 'b':1}
         self.assertEqual({'a':4, 'b':-1}, dict_add(left,right),'dicts not added correctly')
         
+    def test_dict_add_dangling_left(self):
+        left = {'a':1, 'b':1}
+        right = {'a':1}
+        self.assertEqual({'a':2, 'b':1}, dict_add(left,right),'dicts not added correctly')
 
