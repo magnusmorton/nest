@@ -40,6 +40,8 @@ class SubscriptVisitor(ast.NodeVisitor):
         return {node.id:1}
         
     def visit_Num(self, node):
+        if isinstance(node.n, float):
+            raise AffineError
         return {'const': node.n}
           
     def visit_BinOp(self, node):
