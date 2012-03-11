@@ -20,6 +20,7 @@ You should have received a copy of the GNU Affero General Public License
 along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 """
 import ast
+import copy
 
 
 class SubscriptVisitor(ast.NodeVisitor):
@@ -62,15 +63,12 @@ def dict_multiply(value, dictionary):
     return {k:value*v for k,v in dictionary.items() }
     
 def dict_add(left, right):
-    output = {}
-    for key in left.keys():
-        if key in right:
-            output[key] = left[key] + right[key] 
+    output = copy.deepcopy(left)
+    for k,v in right.items():
+        if k in output:
+            output[k] += v
         else:
-            output[key] = left[key]
-    for key in right.keys():
-        if key not in output:
-            output[key] = right[key]
+            output[k] = v
     return output
         
         
