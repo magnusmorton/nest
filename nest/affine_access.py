@@ -25,6 +25,8 @@ import copy
 
 class SubscriptVisitor(ast.NodeVisitor):
     
+    CONST_KEY = 'const'
+    
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
         self._access = {}
@@ -42,15 +44,15 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_Num(self, node):
         if isinstance(node.n, float):
             raise AffineError
-        return {'const': node.n}
+        return {SubscriptVisitor.CONST_KEY: node.n}
           
     def visit_BinOp(self, node):
         left_result = self.visit(node.left)
         right_result = self.visit(node.right)
         if isinstance(node.op,ast.Mult):
-            if 'const' not in left_result:
-                return dict_multiply(right_result['const'], left_result)
-            return dict_multiply(left_result['const'], right_result)
+            if SubscriptVisitor.CONST_KEY not in left_result:
+                return dict_multiply(right_result[SubscriptVisitor.CONST_KEY], left_result)
+            return dict_multiply(left_result[SubscriptVisitor.CONST_KEY], right_result)
         elif isinstance(node.op, ast.Add):
             return dict_add(left_result, right_result)
         elif isinstance(node.op, ast.Sub):
