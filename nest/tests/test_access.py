@@ -30,14 +30,15 @@ from nest.affine_access import *
 
 class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     
-    SIMPLE_ACCESS = "a[i]"
-    TWO_ACCESS = "a[i + j]"
-    SIMPLE_COEFF = "a[2*i]"
-    TWO_COEFF    = "a[2*i + 3*j]"
-    SIMPLE_MINUS = "a[-i]"
-    TWO_MINUS    = "a[i - j]"
+    SIMPLE_ACCESS      = "a[i]"
+    TWO_ACCESS         = "a[i + j]"
+    SIMPLE_COEFF       = "a[2*i]"
+    TWO_COEFF          = "a[2*i + 3*j]"
+    SIMPLE_MINUS       = "a[-i]"
+    TWO_MINUS          = "a[i - j]"
     SIMPLE_COEFF_MINUS = "a[-2*i]"
     TWO_COEFF_MINUS    = "a[3*i - 2*j]"
+    DIV_ACCESS         = "a[i/2]"
 
     def setUp(self):
         self.visitor = SubscriptVisitor()
@@ -71,10 +72,14 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
         self.visit(TestSubscriptVisitor.SIMPLE_COEFF_MINUS)
         self.assertEqual(self.visitor.access,{'i':-2}, "coeff of i not -2")
     
-    def test__minus_with_two_coeff(self):
+    def test_minus_with_two_coeff(self):
         """tests extracting a negative coefficient"""
         self.visit(TestSubscriptVisitor.TWO_COEFF_MINUS)
         self.assertEqual(self.visitor.access,{'i':3, 'j':-2}, "coeff of j not -2")    
+        
+    def test_div_access_throws_exception(self):
+        with self.assertRaises(NonAffineException):
+            self.visit(TestSubscriptVisitor.DIV_ACCESS)
         
 class TestHelperMethods(unittest.TestCase):
     
