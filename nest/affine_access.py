@@ -24,13 +24,9 @@ import ast
 
 class SubscriptVisitor(ast.NodeVisitor):
     
-    (GENERIC,MULT, SUB, NEG) = range(4)
-
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
         self._access = {}
-        self._foundID = None
-        self._context_stack = []
 
     @property
     def access(self):
