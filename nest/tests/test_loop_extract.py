@@ -57,6 +57,11 @@ for i in range(5):
         i*j
 """
 
+SIMPLE_WITH_ACCESS = """
+for i in [1,2,3]:
+    a[i]
+"""
+
 
 NON_LOOP_STATEMENT = "print(a)"
     
