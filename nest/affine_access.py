@@ -61,7 +61,8 @@ class SubscriptVisitor(ast.NodeVisitor):
                 right_result, left_result = left_result, right_result
             elif SubscriptVisitor.CONST_KEY not in left_result:
                 raise AffineError
-            out =  dict_multiply(left_result[SubscriptVisitor.CONST_KEY], right_result)
+            out =  dict_multiply(left_result[SubscriptVisitor.CONST_KEY],
+                    right_result)
         elif isinstance(node.op, ast.Add):
             out =  dict_add(left_result, right_result)
         elif isinstance(node.op, ast.Sub):
