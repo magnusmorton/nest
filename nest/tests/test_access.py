@@ -4,7 +4,7 @@
 test_access.py
 
 Created by Magnus Morton on 2012-02-12.
-(c) Copyright 2012 Magnus Morton. All Rights Reserved. 
+(c) Copyright 2012 Magnus Morton. 
 
 This file is part of Nest.
 

@@ -1,5 +1,5 @@
 '''
-(c) Copyright 2012 Magnus Morton. All Rights Reserved. 
+(c) Copyright 2012 Magnus Morton.
 
 This file is part of Nest.
 
