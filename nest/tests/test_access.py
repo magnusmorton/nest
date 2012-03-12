@@ -41,6 +41,8 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     DIV_ACCESS         = "a[i/2]"
     FLOAT_ACCESS       = "a[2.4354565767]"
     RIGHT_MULT         = "a[i*2]"
+    SIMPLE_CONST       = "a[1]"
+    CONST_EXPRESSION   = "a[i - 1]"
 
     def setUp(self):
         self.visitor = SubscriptVisitor()
@@ -88,8 +90,19 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
             self.visit(TestSubscriptVisitor.FLOAT_ACCESS)
             
     def test_right_mult(self):
-       self.visit(TestSubscriptVisitor.RIGHT_MULT)
-       self.assertEqual(self.visitor.access, {'i': 2}, "constant on right side of mult expression does not work")
+        self.visit(TestSubscriptVisitor.RIGHT_MULT)
+        self.assertEqual(self.visitor.access, {'i': 2}, "constant on right side of mult expression does not work")
+       
+    def test_const_extract(self):
+        self.visit(TestSubscriptVisitor.SIMPLE_CONST)
+        self.assertEqual(self.visitor.access, {SubscriptVisitor.CONST_KEY: 1}, "constant on right side of mult expression does not work")
+        
+    def test_const_expression(self):
+        self.visit(TestSubscriptVisitor.CONST_EXPRESSION)
+        self.assertEqual(self.visitor.access, {"i":1, SubscriptVisitor.CONST_KEY: -1}, "constant on right side of mult expression does not work")
+        
+    
+        
                     
         
 class TestHelperMethods(unittest.TestCase):
