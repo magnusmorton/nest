@@ -24,6 +24,12 @@ import copy
 
 
 class SubscriptVisitor(ast.NodeVisitor):
+    """
+    This visits the index expression of an array access and
+    extracts the coefficients of the loop index variables.
+    It probably should be called something else.
+    TODO: Symbolic Constants
+    """
     
     CONST_KEY = 'const'
     
