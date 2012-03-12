@@ -43,6 +43,7 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     RIGHT_MULT         = "a[i*2]"
     SIMPLE_CONST       = "a[1]"
     CONST_EXPRESSION   = "a[i - 1]"
+    NON_LINEAR         = "a[i*j]"
 
     def setUp(self):
         self.visitor = SubscriptVisitor()
@@ -100,6 +101,10 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     def test_const_expression(self):
         self.visit(TestSubscriptVisitor.CONST_EXPRESSION)
         self.assertEqual(self.visitor.access, {"i":1, SubscriptVisitor.CONST_KEY: -1}, "constant on right side of mult expression does not work")
+        
+    def test_non_linear_access_throws_exception(self):
+        with self.assertRaises(AffineError):
+            self.visit(TestSubscriptVisitor.NON_LINEAR)
         
     
         
