@@ -107,7 +107,10 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
             self.visit(TestSubscriptVisitor.NON_LINEAR)
         
     
-        
+class TestStatement(unittest.TestCase):
+
+    def setUp(self):
+        pass
                     
         
 class TestHelperMethods(unittest.TestCase):
