@@ -20,7 +20,9 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 import ast
 
 class Translator(object):
-    pass
 
     def translate(self, source):
-        ast.parse(source)
+        parsed_code = ast.parse(source)
+
+        
+
