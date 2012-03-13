@@ -31,4 +31,12 @@ class TestTranslator(unittest.TestCase):
         translator = Translator()
         translator.translate("foo")
         mock_parse.assert_called_with("foo")
+    
+    @unittest.skip("need to add some stuff to the loop module")
+    @patch('nest.loop.get_safe_loops')
+    def test_translator_should_analyse(self, mock_method):
+        translator = Translator()
+        translator.translate("foo")
+        mock_method.assert_called_with(ast.parse("foo"))
+        
 
