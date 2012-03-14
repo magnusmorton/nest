@@ -29,6 +29,10 @@ def get_lower_bound(iterator):
     visitor = BoundsVisitor()
     visitor.visit(iterator)
     return visitor.lower_bound
+
+def get_safe_loops(parsed_ast):
+    visitor = LoopVisitor()
+    visitor.visit(parsed_ast)
     
 class BoundsVisitor(ast.NodeVisitor):
     

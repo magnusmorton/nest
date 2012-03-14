@@ -20,6 +20,7 @@ import nest.loop
 import ast
 import unittest
 from nest.tests.visitor_helper import VisitorHelper
+from mock import *
 
 SIMPLE_LOOP = """
 for i in [1,2,3]:
@@ -166,6 +167,21 @@ class BoundsTests(unittest.TestCase):
     def test_get_upper_bound_from_two_arg_range(self):
         range_ast = ast.parse(self.ONE_TEN_RANGE)
         self.assertEqual(nest.loop.get_upper_bound(range_ast), 9, "Detected upper bound was not 9")
-        
+
+
+class SafeLoopTests(unittest.TestCase):
+
+    def setUp(self):
+        """fixtures"""
+        pass
+
+
+    def test_get_safe_loops_should_visit_nodes(self):
+        with patch('nest.loop.LoopVisitor') as MockVisitor:
+            instance = MockVisitor.return_value
+            instance.visit.return_value = None
+            nest.loop.get_safe_loops("FOO")
+            MockVisitor.assert_called_with()
+            MockVisitor().visit.assert_called_with("FOO")
 
     
