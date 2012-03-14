@@ -21,13 +21,14 @@ import ast
 
 class Translator(object):
 
-    def __init__(self, get_safe_loops_fn=None):
+    def __init__(self, get_safe_loops_fn=None, transformer_fn=None):
         self.get_safe_loops_fn = get_safe_loops_fn
-        
+        self.transformer_fn = transformer_fn
 
     def translate(self, source):
         parsed_code = ast.parse(source)
         safe_loops = self.get_safe_loops_fn(parsed_code)
+        transformed_tree = self.transformer_fn(safe_loops)
         
 
         

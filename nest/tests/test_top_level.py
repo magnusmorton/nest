@@ -30,15 +30,20 @@ class TestTranslator(unittest.TestCase):
         self.mock_parse = mock_parse
         self.mock_parse.return_value = "FOO_PARSE"
         self.mock_get_safe_loops = Mock()
-        self.mock_get_safe_loops.return_value = []
-        translator = Translator(get_safe_loops_fn=self.mock_get_safe_loops)
+        self.loops = "LOOPS"
+        self.mock_get_safe_loops.return_value = self.loops
+        self.mock_transformer = Mock()
+        translator = Translator(get_safe_loops_fn=self.mock_get_safe_loops,
+                transformer_fn=self.mock_transformer)
         translator.translate("foo")
     
     def test_translator_should_parse_input(self):
         self.mock_parse.assert_called_with("foo")
     
-    #@unittest.skip("need to add some stuff to the loop module")
     def test_translator_should_analyse(self):
         self.mock_get_safe_loops.assert_called_with("FOO_PARSE")
+    
+    def test_translator_should_generate_code(self):
+        self.mock_transformer.assert_called_with(self.loops)
         
 
