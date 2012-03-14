@@ -37,7 +37,7 @@ class TestTranslator(unittest.TestCase):
         self.mock_transformer = Mock()
         self.mock_transformer.return_value = "CODE"
         self.mock_compile = mock_compile
-        translator = Translator(get_safe_loops_fn=self.mock_get_safe_loops,
+        translator = Translator(filename='foo.py',get_safe_loops_fn=self.mock_get_safe_loops,
                 transformer_fn=self.mock_transformer)
         translator.translate("foo")
     
@@ -51,7 +51,7 @@ class TestTranslator(unittest.TestCase):
         self.mock_transformer.assert_called_with(self.loops)
     
     def test_translator_should_compile_code(self):
-        self.mock_compile.assert_called_with("CODE")
+        self.mock_compile.assert_called_with("CODE","foo.py", 'exec')
 
 
         
