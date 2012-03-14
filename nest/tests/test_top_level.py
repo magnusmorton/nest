@@ -22,21 +22,23 @@ from mock import *
 from nest.translate import *
 
 class TestTranslator(unittest.TestCase):
-    def setUp(self):
-        """sets up fixtures"""
-        pass
+    """ I wish Python had something rspeccy"""
     
     @patch('ast.parse')
-    def test_translator_should_parse_input(self, mock_parse):
-        translator = Translator()
+    def setUp(self, mock_parse):
+        """sets up fixtures"""
+        self.mock_parse = mock_parse
+        self.mock_parse.return_value = "FOO_PARSE"
+        self.mock_get_safe_loops = Mock()
+        self.mock_get_safe_loops.return_value = []
+        translator = Translator(get_safe_loops_fn=self.mock_get_safe_loops)
         translator.translate("foo")
-        mock_parse.assert_called_with("foo")
     
-    @unittest.skip("need to add some stuff to the loop module")
-    @patch('nest.loop.get_safe_loops')
-    def test_translator_should_analyse(self, mock_method):
-        translator = Translator()
-        translator.translate("foo")
-        mock_method.assert_called_with(ast.parse("foo"))
+    def test_translator_should_parse_input(self):
+        self.mock_parse.assert_called_with("foo")
+    
+    #@unittest.skip("need to add some stuff to the loop module")
+    def test_translator_should_analyse(self):
+        self.mock_get_safe_loops.assert_called_with("FOO_PARSE")
         
 
