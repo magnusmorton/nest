@@ -49,7 +49,7 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_Subscript(self, node):
         target = node.value
         print(node.ctx)
-        self.visit(node.slice)
+        self.accesses.append(Statement(target=target, access =self.visit(node.slice), context = node.ctx))
         
     def visit_Index(self, node):
         self._access = self.visit(node.value)
@@ -106,12 +106,17 @@ def dict_add(left, right):
         
         
 class Statement(object):
+    (WRITE, READ) = range(2)
     
     def __init__(self, target=None, access=None, context=None):
         self._target = target
         self._access = access
-        self._context = context
-    
+        self._context = None
+        if isinstance(context, ast.Store):
+            self._context = Statement.WRITE
+        if isinstance(context, ast.Load):
+            self._context = Statement.READ
+            
     
     @property
     def target(self):

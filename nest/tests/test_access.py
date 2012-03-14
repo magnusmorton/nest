@@ -112,6 +112,14 @@ class TestStatement(unittest.TestCase):
 
     def setUp(self):
         pass
+        
+    def test_if_context_is_Store_then_WRITE(self):
+        stmt = Statement(context=ast.Store())
+        self.assertEqual(stmt.context, Statement.WRITE, "context is not WRITE")
+        
+    def test_if_context_is_Load_then_READ(self):
+        stmt = Statement(context=ast.Load())
+        self.assertEqual(stmt.context, Statement.READ, "context is not READ")
                     
         
 class TestHelperMethods(unittest.TestCase):
