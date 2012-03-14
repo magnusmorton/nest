@@ -29,6 +29,8 @@ class Translator(object):
         parsed_code = ast.parse(source)
         safe_loops = self.get_safe_loops_fn(parsed_code)
         transformed_tree = self.transformer_fn(safe_loops)
+        output_code = compile(transformed_tree)
+
         
 
         

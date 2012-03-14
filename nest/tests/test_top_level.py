@@ -24,15 +24,19 @@ from nest.translate import *
 class TestTranslator(unittest.TestCase):
     """ I wish Python had something rspeccy"""
     
+    @patch('builtins.compile')
     @patch('ast.parse')
-    def setUp(self, mock_parse):
-        """sets up fixtures"""
+    def setUp(self, mock_parse, mock_compile):
+        """sets up fixtures...
+        This is a bit of a mess"""
         self.mock_parse = mock_parse
         self.mock_parse.return_value = "FOO_PARSE"
         self.mock_get_safe_loops = Mock()
         self.loops = "LOOPS"
         self.mock_get_safe_loops.return_value = self.loops
         self.mock_transformer = Mock()
+        self.mock_transformer.return_value = "CODE"
+        self.mock_compile = mock_compile
         translator = Translator(get_safe_loops_fn=self.mock_get_safe_loops,
                 transformer_fn=self.mock_transformer)
         translator.translate("foo")
@@ -45,5 +49,10 @@ class TestTranslator(unittest.TestCase):
     
     def test_translator_should_generate_code(self):
         self.mock_transformer.assert_called_with(self.loops)
+    
+    def test_translator_should_compile_code(self):
+        self.mock_compile.assert_called_with("CODE")
+
+
         
 
