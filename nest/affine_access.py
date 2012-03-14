@@ -36,13 +36,24 @@ class SubscriptVisitor(ast.NodeVisitor):
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
         self._access = {}
+        self._accesses = []
 
     @property
     def access(self):
         return self._access
         
+    @property
+    def accesses(self):
+        return self._accesses
+        
+    def visit_Subscript(self, node):
+        target = node.value
+        print(node.ctx)
+        self.visit(node.slice)
+        
     def visit_Index(self, node):
-            self._access = self.visit(node.value)
+        self._access = self.visit(node.value)
+        return self._access
         
     def visit_Name(self, node):
         return {node.id:1}
