@@ -63,6 +63,11 @@ for i in [1,2,3]:
     a[i]
 """
 
+LOWER_RANGE = """
+for i in range(1,5):
+    i*1
+"""
+
 
 NON_LOOP_STATEMENT = "print(a)"
     
@@ -99,6 +104,10 @@ class LoopVistitorTests(unittest.TestCase, VisitorHelper):
     def test_upper_bound_found_when_range_10(self):
         self.visit(SIMPLE_RANGE)
         self.assertEqual(self.visitor.loop_environments[0].upper_bound, 9, "Detected upper bound was not 9")
+        
+    def test_lower_bound_found(self):
+        self.visit(LOWER_RANGE)
+        self.assertEqual(self.visitor.loop_environments[0].lower_bound, 1, "Detected upper bound was not 9")
                                             
     def test_upper_bound_found_when_range_5(self):
         self.visit(SIMPLE_RANGE_5)

@@ -78,10 +78,10 @@ class LoopVisitor(ast.NodeVisitor):
     def visit_For(self, node):
         top = False
         if not self.current_loop_environment:
-            self.current_loop_environment = LoopEnvironment(get_upper_bound(node.iter), node.target.id)
+            self.current_loop_environment = LoopEnvironment(get_lower_bound(node.iter), get_upper_bound(node.iter), node.target.id)
             top = True
         else:
-            self.current_loop_environment.append_child(LoopEnvironment(get_upper_bound(node.iter), node.target.id))
+            self.current_loop_environment.append_child(LoopEnvironment(get_lower_bound(node.iter),get_upper_bound(node.iter), node.target.id))
         super(LoopVisitor, self).generic_visit(node)
         if top:
             self._loop_environments.append(self.current_loop_environment)
@@ -89,8 +89,9 @@ class LoopVisitor(ast.NodeVisitor):
 
 class LoopEnvironment(object):
     
-    def __init__(self, bound=0, target=None):
-        self._upper_bound = bound
+    def __init__(self,lower_bound=0,  upper_bound=0, target=None):
+        self._lower_bound = lower_bound
+        self._upper_bound = upper_bound
         self._target = target
         self._child = None
     
@@ -104,6 +105,10 @@ class LoopEnvironment(object):
     @property
     def upper_bound(self):
         return self._upper_bound
+        
+    @property
+    def lower_bound(self):
+        return self._lower_bound
 
     @property
     def target(self):
