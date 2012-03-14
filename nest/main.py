@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-nest.py
-
 Created by Magnus Morton on 2012-03-14.
 (c) Copyright 2012 Magnus Morton.
 
