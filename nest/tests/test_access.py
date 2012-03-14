@@ -44,6 +44,7 @@ class TestSubscriptVisitor(unittest.TestCase, VisitorHelper):
     SIMPLE_CONST       = "a[1]"
     CONST_EXPRESSION   = "a[i - 1]"
     NON_LINEAR         = "a[i*j]"
+    ASSIGN = "a[i] = a[i+1]"
 
     def setUp(self):
         self.visitor = SubscriptVisitor()

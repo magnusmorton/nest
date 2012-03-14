@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import ast
+import nest.affine_access
 
 
 """These methods should go somewhere else"""

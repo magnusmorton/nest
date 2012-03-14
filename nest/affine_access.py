@@ -42,7 +42,7 @@ class SubscriptVisitor(ast.NodeVisitor):
         return self._access
         
     def visit_Index(self, node):
-        self._access = self.visit(node.value)
+            self._access = self.visit(node.value)
         
     def visit_Name(self, node):
         return {node.id:1}
@@ -93,6 +93,26 @@ def dict_add(left, right):
             output[k] = v
     return output
         
+        
+class Statement(object):
+    
+    def __init__(self, target=None, access=None, context=None):
+        self._target = target
+        self._access = access
+        self._context = context
+    
+    
+    @property
+    def target(self):
+        return self._target
+    
+    @property
+    def access(self):
+        return self._access
+        
+    @property
+    def context(self):
+        return self._context
         
             
 
