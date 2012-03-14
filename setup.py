@@ -22,4 +22,7 @@ setup(
     name = "Nest",
     version = "0.1",
     packages = find_packages(),
-    test_suite = "nest.tests")
+    test_suite = "nest.tests",
+    entry_points = {
+        'console_scripts': ['nest = nest.main:main']
+    })
