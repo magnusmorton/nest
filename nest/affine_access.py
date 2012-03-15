@@ -153,9 +153,15 @@ class Statement(object):
         return self._context
         
             
+def constraint_normalize(*constraints):
+    pass
 
 def is_dependent(stmt1, stmt2):
     if stmt1.context is Statement.READ and stmt2.context is Statement.READ:
         return False
+    domain = []
+    
+
+    
     
 
