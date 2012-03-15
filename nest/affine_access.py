@@ -21,6 +21,7 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 """
 import ast
 import copy
+import py_pip
 
 def get_statements(node):
     visitor = SubscriptVisitor()
@@ -35,7 +36,7 @@ class SubscriptVisitor(ast.NodeVisitor):
     TODO: Symbolic Constants
     """
     
-    CONST_KEY = 'const'
+    CONST_KEY = 'Zconst'
     
     def __init__(self):
         super(SubscriptVisitor, self).__init__()
@@ -152,6 +153,7 @@ class Statement(object):
     @property
     def context(self):
         return self._context
+
         
             
 def constraint_normalize(*constraints):
@@ -168,9 +170,56 @@ def get_unique_keys(dict1, dict2):
     return keys
 
 def is_dependent(stmt1, stmt2):
+    """ This is a bit crazy"""
     if stmt1.context is Statement.READ and stmt2.context is Statement.READ:
         return False
-    domain = []
+    keys = get_unique_keys(stmt1.access, stmt2.access)
+    print(keys)
+    domain_matrix = []
+    constraints = [0]
+    # generate constraint array for access1 = access2
+    for key in keys:
+        if key == CONST_KEY:
+            constraints.append(stmt1.access[key] - stmt2.access[key])
+        else:
+            if key in stmt1.access:
+                constraints.append(stmt1.access[key])
+            else:
+                constraints.append(0)
+            if key in stmt2.access:
+                constraints.append(stmt2.access[key])
+            else:
+                constraints.append(0)
+
+    domain_matrix.append(constraints)
+    constraints = [1]
+    for key in keys:
+            if key in stmt1.loop_environment.computed_bounds[0]:
+                constraints.append(stmt1.access[key])
+            else:
+                constraints.append(0)
+    domain_matrix.append(constraints)
+    problem = py_pip.Problem(len(keys) -1)
+    problem.domain = domain_matrix
+    solution = problem.solve()
+    return solution.solution_exists
+
+
+def generate_constraint_array(keys, constraints, access1, access2):
+    for key in keys:
+        if key == CONST_KEY:
+            constraints.append(access1[key] - access2[key])
+        else:
+            if key in stmt1.access1:
+                constraints.append(access1[key])
+            else:
+                constraints.append(0)
+            if key in stmt2.access2:
+                constraints.append(access2[key])
+            else:
+                constraints.append(0)
+
+
     
 
     
