@@ -21,3 +21,7 @@ import ast
 class VisitorHelper():
     def visit(self, source):
         self.visitor.visit(ast.parse(source))
+
+    def visitBinOp(self, source):
+    	print(ast.dump(ast.parse(source)))
+    	self.visitor.visit_BinOp(ast.parse(source).body[0].value)
