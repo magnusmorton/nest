@@ -125,11 +125,20 @@ class Statement(object):
         self._target = target
         self._access = access
         self._context = None
+        self._loop_environment = None
         if isinstance(context, ast.Store):
             self._context = Statement.WRITE
         if isinstance(context, ast.Load):
             self._context = Statement.READ
-            
+
+
+    @property
+    def loop_environment(self):
+        return self._loop_environment
+        
+    @loop_environment.setter
+    def loop_environment(self, environment):
+        self._loop_environment = environment            
     
     @property
     def target(self):
