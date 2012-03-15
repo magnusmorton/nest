@@ -63,9 +63,20 @@ for i in [1,2,3]:
     a[i]
 """
 
+
 LOWER_RANGE = """
 for i in range(1,5):
     i*1
+"""
+
+SIMPLE_SAFE = """
+for i in range(5):
+    a[i] = 1
+"""
+
+SIMPLE_UNSAFE = """
+for i in range(5):
+    a[i] = a[i-1]
 """
 
 
@@ -128,6 +139,14 @@ class LoopVistitorTests(unittest.TestCase, VisitorHelper):
     def test_target_found_in_inner_loop(self):
         self.visit(SIMPLE_NESTED)
         self.assertEqual(self.visitor.loop_environments[0].child.target, "b", "Target found was not b")
+        
+    def test_is_safe_true_when_safe(self):
+        self.visit(SIMPLE_SAFE)
+        self.assertTrue(self.visitor.loop_environments[0].is_safe(), "loop reported as unsafe when safe")
+        
+    def test_is_safe_false_when_unsafe(self):
+        self.visit(SIMPLE_UNSAFE)
+        self.assertFalse(self.visitor.loop_environments[0].is_safe(), "loop reported as safe when unsafe")
         
         
 class LoopEnvironmentTest(unittest.TestCase):
