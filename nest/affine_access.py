@@ -55,7 +55,8 @@ class SubscriptVisitor(ast.NodeVisitor):
         target = node.value
         print(node.ctx)
         try:
-            self.accesses.append(Statement(target=target, access =self.visit(node.slice), context = node.ctx))
+            self.accesses.append(Statement(target=target, access 
+                    =self.visit(node.slice), context = node.ctx))
         except:
             pass
         finally:
@@ -153,8 +154,18 @@ class Statement(object):
         return self._context
         
             
-    def constraint_normalize(*constraints):
-        pass
+def constraint_normalize(*constraints):
+    pass
+
+def get_unique_keys(dict1, dict2):
+    keys = []
+    for key in dict1.keys():
+        if key not in keys:
+            keys.append(key)
+    for key in dict2.keys():
+        if key not in keys:
+            keys.append(key)
+    return keys
 
 def is_dependent(stmt1, stmt2):
     if stmt1.context is Statement.READ and stmt2.context is Statement.READ:

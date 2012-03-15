@@ -154,6 +154,16 @@ class TestHelperMethods(unittest.TestCase):
     # def test_normalize_two_constraints_simple(self):
     #     one = {'i':1}
     #     two = {'j'}
+
+    def test_unique_keys(self):
+        one = {'i':1}
+        two = {'j':1}
+        self.assertEqual(get_unique_keys(one, two), ['i', 'j'], "unique keys are not i & j")
+
+    def test_unique_keys_obvious(self):
+        one = {'i':1}
+        two = {'i':1}
+        self.assertEqual(get_unique_keys(one, two), ['i'], "unique keys are not just i")
     
         
 
