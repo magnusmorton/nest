@@ -170,7 +170,13 @@ class LoopEnvironmentTest(unittest.TestCase):
         env.append_child(nest.loop.LoopEnvironment(target="j"))
         self.assertEqual(env.all_targets, ["i", "j"], "targets found was not list containing i, j only")
 
+    def test_get_computed_bound_constraints(self):
+        env = nest.loop.LoopEnvironment(target='i', upper_bound=5)
+        self.assertEqual(env.computed_bounds(), [{'i':1, 'const':0}, {'i':-1, 'const':5}])
     
+    def test_get_computed_bound_constraints_lower(self):
+        env = nest.loop.LoopEnvironment(target='i',lower_bound=2, upper_bound=5)
+        self.assertEqual(env.computed_bounds(), [{'i':1, 'const':-2}, {'i':-1, 'const':5}])
         
         
 class BoundsTests(unittest.TestCase):

@@ -90,12 +90,18 @@ class LoopVisitor(ast.NodeVisitor):
 
 class LoopEnvironment(object):
     
+
+    CONST_KEY = 'const'
+        
     def __init__(self,lower_bound=0,  upper_bound=0, target=None, statements=None):
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
         self._target = target
         self._child = None
         self._statements = statements
+        if self._statements:
+            for statement in self._statements:
+                statement.loop_environment = self
     
     @property
     def nesting_depth(self):
@@ -116,6 +122,15 @@ class LoopEnvironment(object):
     def target(self):
         return self._target
 
+    def computed_bounds(self):
+        #TODO: FM Stuff should go here
+        output = []
+        #lower
+        output.append({self._target:1, LoopEnvironment.CONST_KEY: -1*self._lower_bound})
+        #upper
+        output.append({self._target:-1, LoopEnvironment.CONST_KEY: self._upper_bound})
+        return output
+
     @property
     def all_targets(self):
         if self._child is None:
@@ -133,3 +148,4 @@ class LoopEnvironment(object):
     def is_safe(self):
         return True
         
+
