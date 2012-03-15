@@ -22,6 +22,10 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 import ast
 import copy
 
+def get_statements(node):
+    visitor = SubscriptVisitor()
+    visitor.visit(node)
+    return visitor.accesses
 
 class SubscriptVisitor(ast.NodeVisitor):
     """
@@ -49,7 +53,10 @@ class SubscriptVisitor(ast.NodeVisitor):
     def visit_Subscript(self, node):
         target = node.value
         print(node.ctx)
-        self.accesses.append(Statement(target=target, access =self.visit(node.slice), context = node.ctx))
+        try:
+            self.accesses.append(Statement(target=target, access =self.visit(node.slice), context = node.ctx))
+        except:
+            pass
         
     def visit_Index(self, node):
         self._access = self.visit(node.value)
