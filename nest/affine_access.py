@@ -41,6 +41,7 @@ class SubscriptVisitor(ast.NodeVisitor):
         super(SubscriptVisitor, self).__init__()
         self._access = {}
         self._accesses = []
+        self.in_subscript = False
 
     @property
     def access(self):
@@ -57,9 +58,13 @@ class SubscriptVisitor(ast.NodeVisitor):
             self.accesses.append(Statement(target=target, access =self.visit(node.slice), context = node.ctx))
         except:
             pass
+        finally:
+            pass
         
     def visit_Index(self, node):
+        self.in_subscript = True
         self._access = self.visit(node.value)
+        self.in_subscript = False
         return self._access
         
     def visit_Name(self, node):
@@ -71,23 +76,24 @@ class SubscriptVisitor(ast.NodeVisitor):
         return {SubscriptVisitor.CONST_KEY: node.n}
           
     def visit_BinOp(self, node):
-        left_result = self.visit(node.left)
-        right_result = self.visit(node.right)
-        out = {}
-        if isinstance(node.op,ast.Mult):
-            if SubscriptVisitor.CONST_KEY in right_result:
-                right_result, left_result = left_result, right_result
-            elif SubscriptVisitor.CONST_KEY not in left_result:
+        if self.in_subscript:
+            left_result = self.visit(node.left)
+            right_result = self.visit(node.right)
+            out = {}
+            if isinstance(node.op,ast.Mult):
+                if SubscriptVisitor.CONST_KEY in right_result:
+                    right_result, left_result = left_result, right_result
+                elif SubscriptVisitor.CONST_KEY not in left_result:
+                    raise AffineError
+                out =  dict_multiply(left_result[SubscriptVisitor.CONST_KEY],
+                        right_result)
+            elif isinstance(node.op, ast.Add):
+                out =  dict_add(left_result, right_result)
+            elif isinstance(node.op, ast.Sub):
+                out = dict_add(left_result, dict_multiply(-1, right_result))
+            else:
                 raise AffineError
-            out =  dict_multiply(left_result[SubscriptVisitor.CONST_KEY],
-                    right_result)
-        elif isinstance(node.op, ast.Add):
-            out =  dict_add(left_result, right_result)
-        elif isinstance(node.op, ast.Sub):
-            out = dict_add(left_result, dict_multiply(-1, right_result))
-        else:
-            raise AffineError
-        return out
+            return out
             
     def visit_UnaryOp(self, node):
         result = self.visit(node.operand)
