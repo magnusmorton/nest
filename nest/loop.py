@@ -79,10 +79,10 @@ class LoopVisitor(ast.NodeVisitor):
     def visit_For(self, node):
         top = False
         if not self.current_loop_environment:
-            self.current_loop_environment = LoopEnvironment(get_lower_bound(node.iter), get_upper_bound(node.iter), node.target.id)
+            self.current_loop_environment = LoopEnvironment(get_lower_bound(node.iter), get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node))
             top = True
         else:
-            self.current_loop_environment.append_child(LoopEnvironment(get_lower_bound(node.iter),get_upper_bound(node.iter), node.target.id))
+            self.current_loop_environment.append_child(LoopEnvironment(get_lower_bound(node.iter),get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node)))
         super(LoopVisitor, self).generic_visit(node)
         if top:
             self._loop_environments.append(self.current_loop_environment)
@@ -90,11 +90,12 @@ class LoopVisitor(ast.NodeVisitor):
 
 class LoopEnvironment(object):
     
-    def __init__(self,lower_bound=0,  upper_bound=0, target=None):
+    def __init__(self,lower_bound=0,  upper_bound=0, target=None, statements=None):
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
         self._target = target
         self._child = None
+        self._statements = statements
     
     @property
     def nesting_depth(self):
@@ -120,7 +121,7 @@ class LoopEnvironment(object):
         if self._child is None:
             return [self._target]
         else:
-            return  [self._target] + self._child.all_targets
+            return [self._target] + self._child.all_targets
     
     @property
     def child(self):
@@ -128,4 +129,7 @@ class LoopEnvironment(object):
         
     def append_child(self, child):
         self._child = child
+        
+    def is_safe(self):
+        return True
         
