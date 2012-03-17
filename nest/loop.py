@@ -34,6 +34,12 @@ def get_lower_bound(iterator):
 def get_safe_loops(parsed_ast):
     visitor = LoopVisitor()
     visitor.visit(parsed_ast)
+    safe_loops = []
+    # reduce number of comparisons here
+    for loop in visitor.loops_found:
+        if loop.is_safe:
+            safe_loops.append(loop)
+
     
 class BoundsVisitor(ast.NodeVisitor):
     
@@ -93,7 +99,7 @@ class LoopEnvironment(object):
 
     CONST_KEY = 'const'
         
-    def __init__(self,lower_bound=0,  upper_bound=0, target=None, statements=None):
+    def __init__(self,lower_bound=0,  upper_bound=0, target=None, statements=[]):
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
         self._target = target
@@ -141,11 +147,25 @@ class LoopEnvironment(object):
     @property
     def child(self):
         return self._child
+
+    @property
+    def all_statements(self):
+        if self._child:
+            return self._statements + self._child.all_statements
+        else:
+            return self._statements
         
     def append_child(self, child):
         self._child = child
         
     def is_safe(self):
-        return True
+        safe = True
+        statements_left = self.all_statements
+        while statements_left:
+            statement = statements_left.pop()
+            for other_statement in statements_left:
+                if nest.affine_access.is_dependent(statement, other_statement):
+                    safe = False
+        return safe
         
 

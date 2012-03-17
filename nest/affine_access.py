@@ -23,6 +23,7 @@ import ast
 import copy
 import py_pip
 
+CONST_KEY = 'Zconst'
 def get_statements(node):
     visitor = SubscriptVisitor()
     visitor.visit(node)
@@ -180,7 +181,12 @@ def is_dependent(stmt1, stmt2):
     # generate constraint array for access1 = access2
     for key in keys:
         if key == CONST_KEY:
-            constraints.append(stmt1.access[key] - stmt2.access[key])
+            val1,val2 = 0,0
+            if key in stmt1.access:
+                val1 = stmt1.access[key]
+            if key in stmt2.access:
+                val2 = stmt2.access[key]
+            constraints.append(val1 - val2)
         else:
             if key in stmt1.access:
                 constraints.append(stmt1.access[key])
@@ -194,14 +200,17 @@ def is_dependent(stmt1, stmt2):
     domain_matrix.append(constraints)
     constraints = [1]
     for key in keys:
-            if key in stmt1.loop_environment.computed_bounds[0]:
+            if key in stmt1.loop_environment.computed_bounds()[0]:
                 constraints.append(stmt1.access[key])
             else:
                 constraints.append(0)
+            constraints.append(0)
     domain_matrix.append(constraints)
+    print(domain_matrix)
     problem = py_pip.Problem(len(keys) -1)
     problem.domain = domain_matrix
     solution = problem.solve()
+    print(solution.solution_exists)
     return solution.solution_exists
 
 
