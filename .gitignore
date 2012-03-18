@@ -4,4 +4,6 @@ __pycache__
 build
 *.tmproj
 *.swp
+*~
 tags
+etags
