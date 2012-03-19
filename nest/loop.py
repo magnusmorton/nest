@@ -99,15 +99,22 @@ class LoopEnvironment(object):
 
     CONST_KEY = 'const'
         
-    def __init__(self,lower_bound=0,  upper_bound=0, target=None, statements=[]):
+    def __init__(self,lower_bound=0,  upper_bound=0, target=None, statements=[], node=None):
+        """ do something about this """
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
         self._target = target
         self._child = None
         self._statements = statements
+        self._node = node
         if self._statements:
             for statement in self._statements:
                 statement.loop_environment = self
+                
+    @property
+    def tagged_node(self):
+        return self._node
+    
     
     @property
     def nesting_depth(self):
