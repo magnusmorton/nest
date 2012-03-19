@@ -16,12 +16,26 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 '''
+import ast
 
-class Transformer(object):
+class ForTransformer(ast.NodeTransformer):
 
     def __init__(self, abstract_tree, loops):
-        self._visitor = abstract_tree
+        self._tree = abstract_tree
         self._loops = loops
+        super().__init__()
+
+    def transform_tree(self):
+        super().visit(self._tree)
+        return self._tree
+
+    def visit_For(self, node):
+        # if
+        pass
+        
+
+        
+        
 
 
     
