@@ -30,13 +30,34 @@ class ForTransformer(ast.NodeTransformer):
         return self._tree
 
     def visit_For(self, node):
-        # if
-        pass
+        for loop in self._loops:
+            if node is loop.tagged_node:
+                return 
+
+
+
+def generate_parallel_function(loop):
+    func = ast.FunctionDef()
+    # need to generate random string here
+    func.name = "placeholder"
+    func.body = loop
+    func.dectorator_list = []
+
+
+def generate_function_call(loop_name):
+    call = ast.Call()
+    call.func = ast.Name()
+    call.func.id = loop_name
+    call.func.ctx = ast.Load()
+    call.args = []
+    call.keywords = []
+    call.starargs = None
+    call.kwargs = None
+    return call
         
 
         
         
-
 
     
 
