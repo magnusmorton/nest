@@ -161,6 +161,28 @@ class LoopEnvironment(object):
             return self._statements + self._child.all_statements
         else:
             return self._statements
+
+    @property
+    def node(self):
+        """Returns the ast node this construct
+        corresponds to
+        
+        Arguments:
+        - `self`:
+        """
+        return self._node
+
+    @property
+    def non_locals(self):
+        """
+        Returns all non-local variables in loop
+        Arguments:
+        - `self`:
+        """
+        #for now, lets just assume the array statments are all there is.
+        return [stmt.target for stmt in self.all_statements]
+        
+        
         
     def append_child(self, child):
         self._child = child

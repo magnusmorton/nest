@@ -23,12 +23,27 @@ class ForTransformer(ast.NodeTransformer):
     def __init__(self, abstract_tree, loops):
         self._tree = abstract_tree
         self._loops = loops
+        self._functions = []
+
+        # generate functions for each parallel loop
+        for i,loop in enumerate(self._loops):
+            self._functions.append(generate_parallel_function(i,loop))
+            
         super().__init__()
 
     def transform_tree(self):
         super().visit(self._tree)
         return self._tree
 
+    def visit_Module(self, node):
+        self.generic_visit(node)
+        mp_import = """
+import multiprocessing
+pool = multiprocessing.pool(4)
+"""
+        parsed_import = ast.Parse(mp_import)
+        return ast.Module(parsed_import.body + node.body + self._functions)
+        
     def visit_For(self, node):
         for loop in self._loops:
             if node is loop.tagged_node:
@@ -36,12 +51,17 @@ class ForTransformer(ast.NodeTransformer):
 
 
 
-def generate_parallel_function(loop):
-    func = ast.FunctionDef()
+def generate_parallel_function(count, loop):
     # need to generate random string here
-    func.name = "placeholder"
-    func.body = loop
-    func.dectorator_list = []
+    name = "placeholder" + count
+    args = []
+    for arg in loop.non_locals:
+        arg_name = ast.Name(arg, ast.Param())
+        args.append(arg_name)
+    args = ast.arguments(args=args, varag=None, kwarg=None, defaults=[])
+    #func.body = loop
+    dectorator_list = []
+    return ast.FunctionDef(name=name, args=args, body=[loop], decorator_list=[])
 
 
 def generate_function_call(loop_name):
