@@ -47,7 +47,8 @@ pool = multiprocessing.pool(4)
     def visit_For(self, node):
         for loop in self._loops:
             if node is loop.tagged_node:
-                return 
+                # generate call to generated function
+                pass
 
 
 
