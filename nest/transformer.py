@@ -26,8 +26,8 @@ class ForTransformer(ast.NodeTransformer):
         self._functions = []
 
         # generate functions for each parallel loop
-        for i,loop in enumerate(self._loops):
-            self._functions.append(generate_parallel_function(i,loop))
+        # for i,loop in enumerate(self._loops):
+        #     
             
         super().__init__()
 
@@ -42,19 +42,25 @@ import multiprocessing
 pool = multiprocessing.pool(4)
 """
         parsed_import = ast.Parse(mp_import)
+        #append generated imports and functions
         return ast.Module(parsed_import.body + node.body + self._functions)
         
     def visit_For(self, node):
         for loop in self._loops:
             if node is loop.tagged_node:
                 # generate call to generated function
-                pass
+                self._functions.append(generate_parallel_function(loop))
+                fn_call = generate_function_call(id(loop))
+                return fn_call
+        else:
+            self.generic_visit(node)
 
 
 
-def generate_parallel_function(count, loop):
+
+def generate_parallel_function(loop):
     # need to generate random string here
-    name = "placeholder" + count
+    name = "nest_fn" + id(loop)
     args = []
     for arg in loop.non_locals:
         arg_name = ast.Name(arg, ast.Param())
@@ -65,10 +71,10 @@ def generate_parallel_function(count, loop):
     return ast.FunctionDef(name=name, args=args, body=[loop], decorator_list=[])
 
 
-def generate_function_call(loop_name):
+def generate_function_call(node_id):
     call = ast.Call()
     call.func = ast.Name()
-    call.func.id = loop_name
+    call.func.id = "nest_fn" + node_id 
     call.func.ctx = ast.Load()
     call.args = []
     call.keywords = []
