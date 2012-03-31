@@ -182,7 +182,16 @@ class LoopEnvironment(object):
         #for now, lets just assume the array statments are all there is.
         return [stmt.target for stmt in self.all_statements]
         
-        
+    @property
+    def lists(self):
+        """
+        Returns all non-local variables in loop
+        Arguments:
+        - `self`:
+        """
+        #for now, lets just assume the array statments are all there is.
+        return [stmt.target for stmt in self.all_statements]
+          
         
     def append_child(self, child):
         self._child = child
