@@ -54,10 +54,31 @@ pool = multiprocessing.pool(%d)
             if node is loop.tagged_node:
                 # generate call to generated function
                 self._functions.append(generate_parallel_function(loop))
-                fn_call = generate_function_call(id(loop))
+                for i in range(self._cpus):
+                    # generate call to apply_async
+                    fn_call = generate_function_call(id(loop))
                 return fn_call
         else:
             self.generic_visit(node)
+
+    
+def generate_slices(loop, cpu_count):
+    """
+    """
+    start = loop.lower_bound
+    end  = loop.upper_bound
+    size = end - start
+    slice_size = size // cpu_count
+    slices = []
+    for i in range(cpu_count):
+        if i == cpu_count - 1:
+            slices.append((i*slice_size, end))
+        else:
+            slices.append((i*slice_size, slice_size* i + slice_size))
+
+    
+    return slices
+                
 
 
 
@@ -78,7 +99,7 @@ def generate_parallel_function(loop):
 def generate_function_call(node_id):
     parsed_call = ast.parse("pool.apply_async(nest_fn%d)" % node_id)
     call = ast.Call()
-    call.func =e ast.Attribute(value=Name(id="pool", ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
+    call.func = ast.Attribute(value=Name(id="pool", ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
     call.func.id = "nest_fn" + node_id 
     call.func.ctx = ast.Load()
     call.args = []
