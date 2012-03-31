@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import ast
+import multiprocessing
 
 class ForTransformer(ast.NodeTransformer):
 
@@ -24,11 +25,14 @@ class ForTransformer(ast.NodeTransformer):
         self._tree = abstract_tree
         self._loops = loops
         self._functions = []
-
+        try:
+            self._cpus = multiprocessing.cpu_count()
+        except:
+            self._cpus = 4
         # generate functions for each parallel loop
         # for i,loop in enumerate(self._loops):
         #     
-            
+        
         super().__init__()
 
     def transform_tree(self):
@@ -39,8 +43,8 @@ class ForTransformer(ast.NodeTransformer):
         self.generic_visit(node)
         mp_import = """
 import multiprocessing
-pool = multiprocessing.pool(4)
-"""
+pool = multiprocessing.pool(%d)
+""" % self._cpus
         parsed_import = ast.Parse(mp_import)
         #append generated imports and functions
         return ast.Module(parsed_import.body + node.body + self._functions)

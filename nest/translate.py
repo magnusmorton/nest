@@ -20,6 +20,7 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 import ast
 
 class Translator(object):
+    
 
     def __init__(self,filename=None, get_safe_loops_fn=None, transformer_fn=None):
         self.get_safe_loops_fn = get_safe_loops_fn
