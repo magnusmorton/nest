@@ -72,8 +72,9 @@ def generate_parallel_function(loop):
 
 
 def generate_function_call(node_id):
+    parsed_call = ast.parse("pool.apply_async(nest_fn%d)" % node_id)
     call = ast.Call()
-    call.func = ast.Name()
+    call.func =e ast.Attribute(value=Name(id="pool", ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
     call.func.id = "nest_fn" + node_id 
     call.func.ctx = ast.Load()
     call.args = []
