@@ -19,8 +19,9 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 import ast
 import multiprocessing
 
-class ForTransformer(ast.NodeTransformer):
 
+class ForTransformer(ast.NodeTransformer):
+    RETURN_STUB = "nest_res"
     def __init__(self, abstract_tree, loops):
         self._tree = abstract_tree
         self._loops = loops
@@ -43,7 +44,7 @@ class ForTransformer(ast.NodeTransformer):
         self.generic_visit(node)
         mp_import = """
 import multiprocessing
-pool = multiprocessing.pool(%d)
+pool = multiprocessing.pool(%i)
 """ % self._cpus
         parsed_import = ast.Parse(mp_import)
         #append generated imports and functions
@@ -54,13 +55,23 @@ pool = multiprocessing.pool(%d)
             if node is loop.tagged_node:
                 # generate call to generated function
                 self._functions.append(generate_parallel_function(loop))
+                slices = generate_slices(loop, self._cpus)
+                arr_args = []
+                for slc in slices:
+                    arr_args.append([append_slice(name, slc) for name in loop.lists])
+                stmts = []
                 for i in range(self._cpus):
                     # generate call to apply_async
-                    fn_call = generate_function_call(id(loop))
-                return fn_call
+                    resname = "%s%i" % (ForTransformer.RETURN_STUB, i)
+                    fn_call = generate_function_call(id(loop), arr_args[i])
+                    stmts.append(ast.Assign(targets=[ast.Name(id=resname,ctx=ast.Store())], value=fn_call))
+                for i, arr in enumerate(loop.lists):
+                    
         else:
             self.generic_visit(node)
 
+def append_slice(name, slice_pair):
+    return "%s[%i:%i]" % (name, slice_pair[0], slice_pair[1])
     
 def generate_slices(loop, cpu_count):
     """
@@ -96,13 +107,14 @@ def generate_parallel_function(loop):
     return ast.FunctionDef(name=name, args=args, body=[loop], decorator_list=[])
 
 
-def generate_function_call(node_id):
+def generate_function_call(node_id, arr_args):
     parsed_call = ast.parse("pool.apply_async(nest_fn%d)" % node_id)
     call = ast.Call()
     call.func = ast.Attribute(value=Name(id="pool", ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
     call.func.id = "nest_fn" + node_id 
     call.func.ctx = ast.Load()
-    call.args = []
+    parsed_args = ast.parse(arr_args)
+    call.args = [ast.Name(id="nest_fn%i" % node_id, ctx=ast.Load), parsed_args.body[0]]
     call.keywords = []
     call.starargs = None
     call.kwargs = None
