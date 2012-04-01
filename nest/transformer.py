@@ -60,15 +60,27 @@ pool = multiprocessing.pool(%i)
                 for slc in slices:
                     arr_args.append([append_slice(name, slc) for name in loop.lists])
                 stmts = []
+                resnames  = []
                 for i in range(self._cpus):
                     # generate call to apply_async
                     resname = "%s%i" % (ForTransformer.RETURN_STUB, i)
+                    resnames.append(resnames)
                     fn_call = generate_function_call(id(loop), arr_args[i])
                     stmts.append(ast.Assign(targets=[ast.Name(id=resname,ctx=ast.Store())], value=fn_call))
                 for i, arr in enumerate(loop.lists):
-                    
+                    stmts.append(ast.parse(generate_template(resnames, i, arr)).body[0])
+                return stmts
         else:
             self.generic_visit(node)
+
+def generate_template(resnames, i, arr):
+    template = "%(name)s =[ "
+    for i,name in enumerate(resnames):
+        if i < len(resnames-1):
+            template += name + ".get()[%(index)d] +"
+        else:
+            template += name + ".get()[%(index)d]]"
+    return template % {name:arr, index:i}
 
 def append_slice(name, slice_pair):
     return "%s[%i:%i]" % (name, slice_pair[0], slice_pair[1])
