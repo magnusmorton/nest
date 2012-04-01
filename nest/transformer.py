@@ -102,9 +102,10 @@ def generate_parallel_function(loop):
         arg_name = ast.Name(arg, ast.Param())
         args.append(arg_name)
     args = ast.arguments(args=args, varag=None, kwarg=None, defaults=[])
-    #func.body = loop
+    return_values = (ast.parse(str(loop.non_locals))).body[0]
+    body = [loop.node, return_values]
     dectorator_list = []
-    return ast.FunctionDef(name=name, args=args, body=[loop], decorator_list=[])
+    return ast.FunctionDef(name=name, args=args, body=body, decorator_list=[])
 
 
 def generate_function_call(node_id, arr_args):
@@ -113,7 +114,7 @@ def generate_function_call(node_id, arr_args):
     call.func = ast.Attribute(value=Name(id="pool", ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
     call.func.id = "nest_fn" + node_id 
     call.func.ctx = ast.Load()
-    parsed_args = ast.parse(arr_args)
+    parsed_args = ast.parse(str(arr_args))
     call.args = [ast.Name(id="nest_fn%i" % node_id, ctx=ast.Load), parsed_args.body[0]]
     call.keywords = []
     call.starargs = None
