@@ -25,6 +25,7 @@ import sys
 import os
 import argparse
 import nest.translate
+import nest.transformer
 import ast
 from nest.loop import get_safe_loops
 
@@ -34,13 +35,9 @@ def main():
     parser.add_argument('file')
     args = parser.parse_args()
     source_file = args.file
-    translator = nest.translate.Translator(source_file, get_safe_loops, transformer_fn)
+    translator = nest.translate.Translator(source_file, get_safe_loops, nest.transformer.ForTransformer)
     with open(source_file, 'r') as the_file:
         translator.translate(the_file.read())
 
 if __name__ == '__main__':
 	main()
-
-
-def transformer_fn(dummy):
-    return ast.parse("print('this is a dummy run')")

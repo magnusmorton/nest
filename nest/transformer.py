@@ -43,6 +43,7 @@ class ForTransformer(ast.NodeTransformer):
 
     def transform_tree(self):
         super().visit(self._tree)
+        ast.fix_missing_locations(self._tree)
         return self._tree
 
     def visit_Module(self, node):
@@ -51,12 +52,13 @@ class ForTransformer(ast.NodeTransformer):
 import multiprocessing
 pool = multiprocessing.pool(%i)
 """ % self._cpus
-        parsed_import = ast.Parse(mp_import)
+        parsed_import = ast.parse(mp_import)
         #append generated imports and functions
         return ast.Module(parsed_import.body + node.body + self._functions)
         
     def visit_For(self, node):
         for loop in self._loops:
+            print(loop.tagged_node)
             if node is loop.tagged_node:
                 # generate call to generated function
                 self._functions.append(generate_parallel_function(loop))
@@ -76,6 +78,7 @@ pool = multiprocessing.pool(%i)
                     stmts.append(ast.parse(generate_template(resnames, i, arr)).body[0])
                 return stmts
         else:
+            print("HELLOOO!!!")
             self.generic_visit(node)
 
 def generate_template(resnames, i, arr):
@@ -125,7 +128,7 @@ class BoundsTransformer(ast.NodeTransformer):
         
     
     def visit_Call(self, node):
-        if node.func.id = "range":
+        if node.func.id == "range":
             # this needs to be changed at some point
             node.args[0] = slice_size(self.loop)
             return node
@@ -137,7 +140,7 @@ class BoundsTransformer(ast.NodeTransformer):
 
 def generate_parallel_function(loop):
     # need to generate random string here
-    name = "nest_fn" + id(loop)
+    name = "nest_fn" + str(id(loop))
     args = []
     for arg in loop.non_locals:
         arg_name = ast.Name(arg, ast.Param())
@@ -152,11 +155,11 @@ def generate_parallel_function(loop):
 def generate_function_call(node_id, arr_args):
     parsed_call = ast.parse("pool.apply_async(nest_fn%d)" % node_id)
     call = ast.Call()
-    call.func = ast.Attribute(value=Name(id="pool", ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
-    call.func.id = "nest_fn" + node_id 
+    call.func = ast.Attribute(value=ast.Name(id="pool", ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
+    call.func.id = "nest_fn" + str(node_id) 
     call.func.ctx = ast.Load()
     parsed_args = ast.parse(str(arr_args))
-    call.args = [ast.Name(id="nest_fn%i" % node_id, ctx=ast.Load), parsed_args.body[0]]
+    call.args = [ast.Name(id="nest_fn%i" % node_id, ctx=ast.Load()), parsed_args.body[0]]
     call.keywords = []
     call.starargs = None
     call.kwargs = None

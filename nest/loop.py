@@ -36,9 +36,10 @@ def get_safe_loops(parsed_ast):
     visitor.visit(parsed_ast)
     safe_loops = []
     # reduce number of comparisons here
-    for loop in visitor.loops_found:
-        if loop.is_safe:
+    for loop in visitor.loop_environments:
+        if loop.is_safe():
             safe_loops.append(loop)
+    return safe_loops
 
     
 class BoundsVisitor(ast.NodeVisitor):
@@ -85,10 +86,10 @@ class LoopVisitor(ast.NodeVisitor):
     def visit_For(self, node):
         top = False
         if not self.current_loop_environment:
-            self.current_loop_environment = LoopEnvironment(get_lower_bound(node.iter), get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node))
+            self.current_loop_environment = LoopEnvironment(get_lower_bound(node.iter), get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node), node)
             top = True
         else:
-            self.current_loop_environment.append_child(LoopEnvironment(get_lower_bound(node.iter),get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node)))
+            self.current_loop_environment.append_child(LoopEnvironment(get_lower_bound(node.iter),get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node), node))
         super(LoopVisitor, self).generic_visit(node)
         if top:
             self._loop_environments.append(self.current_loop_environment)
@@ -201,9 +202,12 @@ class LoopEnvironment(object):
         statements_left = self.all_statements
         while statements_left:
             statement = statements_left.pop()
+            print("hej")
             for other_statement in statements_left:
+                print("hai")
                 if nest.affine_access.is_dependent(statement, other_statement):
                     safe = False
+        print(safe)
         return safe
         
 

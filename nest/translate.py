@@ -22,16 +22,22 @@ import ast
 class Translator(object):
     
 
-    def __init__(self,filename=None, get_safe_loops_fn=None, transformer_fn=None):
+    def __init__(self,filename=None, get_safe_loops_fn=None, Transformer_class=None):
         self.get_safe_loops_fn = get_safe_loops_fn
-        self.transformer_fn = transformer_fn
+        self.Transformer = Transformer_class
         self.filename = filename
 
     def translate(self, source):
         parsed_code = ast.parse(source)
         safe_loops = self.get_safe_loops_fn(parsed_code)
-        transformed_tree = self.transformer_fn(safe_loops)
+        if not safe_loops:
+            print("No safe loops found")
+        print(ast.dump(parsed_code))
+        transformer = self.Transformer(parsed_code, safe_loops)
+        transformed_tree = transformer.transform_tree()
+        print(ast.dump(transformed_tree))
         output_code = compile(transformed_tree, self.filename, 'exec')
+        #exec(output_code)
 
         
 
