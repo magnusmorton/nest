@@ -32,6 +32,8 @@ class Translator(object):
         safe_loops = self.get_safe_loops_fn(parsed_code)
         if not safe_loops:
             print("No safe loops found")
+        print(safe_loops)
+        print(safe_loops[0].all_statements)
         print(ast.dump(parsed_code))
         transformer = self.Transformer(parsed_code, safe_loops)
         transformed_tree = transformer.transform_tree()

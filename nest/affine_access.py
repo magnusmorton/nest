@@ -27,6 +27,7 @@ CONST_KEY = 'Zconst'
 def get_statements(node):
     visitor = SubscriptVisitor()
     visitor.visit(node)
+    print(visitor.accesses)
     return visitor.accesses
 
 class SubscriptVisitor(ast.NodeVisitor):
@@ -58,13 +59,12 @@ class SubscriptVisitor(ast.NodeVisitor):
         print(node.ctx)
         try:
             print("hellooooo!!!!!")
-            self.accesses.append(Statement(target=target, access 
+            self._accesses.append(Statement(target=target, access 
                     =self.visit(node.slice), context = node.ctx))
         except:
             print("Affine error occurred")
-            pass
         finally:
-            pass
+            print(self._accesses)
         
     def visit_Index(self, node):
         self.in_subscript = True

@@ -77,6 +77,7 @@ class LoopVisitor(ast.NodeVisitor):
     
     @property    
     def loops_found(self):
+        print("loops found %i" % len(self._loop_environments))
         return len(self._loop_environments)
         
     @property
@@ -89,6 +90,7 @@ class LoopVisitor(ast.NodeVisitor):
         if not self.current_loop_environment:
             self.current_loop_environment = LoopEnvironment(get_lower_bound(node.iter), get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node), node)
             top = True
+            print("top")
         else:
             self.current_loop_environment.append_child(LoopEnvironment(get_lower_bound(node.iter),get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node), node))
         super(LoopVisitor, self).generic_visit(node)
@@ -110,6 +112,7 @@ class LoopEnvironment(object):
         self._statements = statements
         self._node = node
         if self._statements:
+            print(statements)
             for statement in self._statements:
                 statement.loop_environment = self
                 
@@ -159,9 +162,12 @@ class LoopEnvironment(object):
 
     @property
     def all_statements(self):
+        print(self._statements)
         if self._child:
+            print("child")
             return self._statements + self._child.all_statements
         else:
+            print("returning all statements")
             return self._statements
 
     @property
@@ -199,6 +205,7 @@ class LoopEnvironment(object):
         self._child = child
         
     def is_safe(self):
+        # fix this!!!!
         safe = True
         statements_left = self.all_statements
         while statements_left:

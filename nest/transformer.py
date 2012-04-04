@@ -151,8 +151,9 @@ def generate_parallel_function(loop):
     # need to generate random string here
     name = "nest_fn" + str(id(loop))
     args = []
-    print(loop.non_locals)
+    print(loop.all_statements)
     for arg in loop.non_locals:
+        print(arg)
         arg_name = ast.Name(arg, ast.Param())
         args.append(arg_name)
     print(args)
