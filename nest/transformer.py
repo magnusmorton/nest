@@ -50,20 +50,21 @@ pool = multiprocessing.pool(%i)
         parsed_import = ast.parse(mp_import)
         #append generated imports and functions
         print(parsed_import.body)
-        ast.fix_missing_locations(self._tree)
-        return ast.Module(body = parsed_import.body +  self._tree.body + self._functions) 
+        # ast.fix_missing_locations(self._tree)
+        return_module = ast.copy_location(ast.Module(body = parsed_import.body +  self._tree.body + self._functions), self._tree)
+        return return_module
 
-    def visit_Module(self, node):
-        self.generic_visit(node)
-        mp_import = """
-import multiprocessing
-pool = multiprocessing.pool(%i)
-""" % self._cpus
-        parsed_import = ast.parse(mp_import)
-        #append generated imports and functions
-        print(parsed_import.body)
-        return None
-        return ast.Module(body = [parsed_import.body + node.body + self._functions])
+    # def visit_Module(self, node):
+    #         self.generic_visit(node)
+    #         mp_import = """
+    # import multiprocessing
+    # pool = multiprocessing.pool(%i)
+    # """ % self._cpus
+    #         parsed_import = ast.parse(mp_import)
+    #         #append generated imports and functions
+    #         print(parsed_import.body)
+    #         return None
+    #         return ast.Module(body = [parsed_import.body + node.body + self._functions])
         
     def visit_For(self, node):
         for loop in self._loops:
@@ -74,13 +75,13 @@ pool = multiprocessing.pool(%i)
                 slices = generate_slices(loop, cpus)
                 arr_args = []
                 for slc in slices:
-                    arr_args.append([append_slice(name, slc) for name in loop.lists])
+                    arr_args.append([append_slice(name.id, slc) for name in loop.lists])
                 stmts = []
                 resnames  = []
                 for i in range(cpus):
                     # generate call to apply_async
                     resname = "%s%i" % (ForTransformer.RETURN_STUB, i)
-                    resnames.append(resnames)
+                    resnames.append(resname)
                     fn_call = generate_function_call(id(loop), arr_args[i])
                     stmts.append(ast.Assign(targets=[ast.Name(id=resname,ctx=ast.Store())], value=fn_call))
                 for i, arr in enumerate(loop.lists):
@@ -92,12 +93,13 @@ pool = multiprocessing.pool(%i)
 
 def generate_template(resnames, i, arr):
     template = "%(name)s =[ "
+    print(template)
     for i,name in enumerate(resnames):
-        if i < len(resnames-1):
+        if i < len(resnames) -1:
             template += name + ".get()[%(index)d] +"
         else:
             template += name + ".get()[%(index)d]]"
-    return template % {name:arr, index:i}
+    return template % {'name':arr.id, 'index':i}
 
 def append_slice(name, slice_pair):
     return "%s[%i:%i]" % (name, slice_pair[0], slice_pair[1])
@@ -134,6 +136,7 @@ class BoundsTransformer(ast.NodeTransformer):
             self.top_level = True
             self.generic_visit(node)
         self.top_level = False
+        return node
         
     
     def visit_Call(self, node):
@@ -151,15 +154,14 @@ def generate_parallel_function(loop):
     # need to generate random string here
     name = "nest_fn" + str(id(loop))
     args = []
-    print(loop.all_statements)
     for arg in loop.non_locals:
-        print(arg)
         arg_name = ast.Name(arg, ast.Param())
         args.append(arg_name)
-    print(args)
     args = ast.arguments(args=args, varag=None, kwarg=None, defaults=[])
     return_values = (ast.parse(str(loop.non_locals))).body[0]
-    body = [loop.node, return_values]
+    transformed_tree = BoundsTransformer(loop).visit(loop.node)
+    
+    body = [transformed_tree, return_values]
     dectorator_list = []
     return ast.FunctionDef(name=name, args=args, body=body, decorator_list=[])
 
@@ -170,8 +172,11 @@ def generate_function_call(node_id, arr_args):
     call.func = ast.Attribute(value=ast.Name(id="pool", ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
     call.func.id = "nest_fn" + str(node_id) 
     call.func.ctx = ast.Load()
-    parsed_args = ast.parse(str(arr_args))
-    call.args = [ast.Name(id="nest_fn%i" % node_id, ctx=ast.Load()), parsed_args.body[0]]
+    print("printing arr_args")
+    print(arr_args)
+    # parsed_args = ast.parse(str(arr_args))
+    parsed_args = [ast.parse(arg).body[0] for arg in arr_args]
+    call.args = [ast.Name(id="nest_fn%i" % node_id, ctx=ast.Load()), parsed_args]
     call.keywords = []
     call.starargs = None
     call.kwargs = None

@@ -18,6 +18,7 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import ast
 import nest.affine_access
+import copy
 
 
 """These methods should go somewhere else"""
@@ -188,7 +189,7 @@ class LoopEnvironment(object):
         - `self`:
         """
         #for now, lets just assume the array statments are all there is.
-        return [stmt.target for stmt in self.all_statements]
+        return [stmt.target.id for stmt in self.all_statements]
         
     @property
     def lists(self):
@@ -207,7 +208,7 @@ class LoopEnvironment(object):
     def is_safe(self):
         # fix this!!!!
         safe = True
-        statements_left = self.all_statements
+        statements_left = copy.deepcopy(self.all_statements)
         while statements_left:
             statement = statements_left.pop()
             print("hej")

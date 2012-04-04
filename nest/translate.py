@@ -37,6 +37,8 @@ class Translator(object):
         print(ast.dump(parsed_code))
         transformer = self.Transformer(parsed_code, safe_loops)
         transformed_tree = transformer.transform_tree()
+        print(type(transformed_tree))
+        transformed_tree = ast.fix_missing_locations(transformed_tree)
         print(ast.dump(transformed_tree))
         output_code = compile(transformed_tree, self.filename, 'exec')
         #exec(output_code)
