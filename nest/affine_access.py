@@ -57,9 +57,11 @@ class SubscriptVisitor(ast.NodeVisitor):
         target = node.value
         print(node.ctx)
         try:
+            print("hellooooo!!!!!")
             self.accesses.append(Statement(target=target, access 
                     =self.visit(node.slice), context = node.ctx))
         except:
+            print("Affine error occurred")
             pass
         finally:
             pass

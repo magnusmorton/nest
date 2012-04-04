@@ -43,8 +43,15 @@ class ForTransformer(ast.NodeTransformer):
 
     def transform_tree(self):
         super().visit(self._tree)
+        mp_import = """
+import multiprocessing
+pool = multiprocessing.pool(%i)
+""" % self._cpus
+        parsed_import = ast.parse(mp_import)
+        #append generated imports and functions
+        print(parsed_import.body)
         ast.fix_missing_locations(self._tree)
-        return self._tree
+        return ast.Module(body = parsed_import.body +  self._tree.body + self._functions) 
 
     def visit_Module(self, node):
         self.generic_visit(node)
@@ -54,7 +61,9 @@ pool = multiprocessing.pool(%i)
 """ % self._cpus
         parsed_import = ast.parse(mp_import)
         #append generated imports and functions
-        return ast.Module(parsed_import.body + node.body + self._functions)
+        print(parsed_import.body)
+        return None
+        return ast.Module(body = [parsed_import.body + node.body + self._functions])
         
     def visit_For(self, node):
         for loop in self._loops:
@@ -142,9 +151,11 @@ def generate_parallel_function(loop):
     # need to generate random string here
     name = "nest_fn" + str(id(loop))
     args = []
+    print(loop.non_locals)
     for arg in loop.non_locals:
         arg_name = ast.Name(arg, ast.Param())
         args.append(arg_name)
+    print(args)
     args = ast.arguments(args=args, varag=None, kwarg=None, defaults=[])
     return_values = (ast.parse(str(loop.non_locals))).body[0]
     body = [loop.node, return_values]

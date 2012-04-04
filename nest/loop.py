@@ -85,6 +85,7 @@ class LoopVisitor(ast.NodeVisitor):
         
     def visit_For(self, node):
         top = False
+        print(nest.affine_access.get_statements(node))
         if not self.current_loop_environment:
             self.current_loop_environment = LoopEnvironment(get_lower_bound(node.iter), get_upper_bound(node.iter), node.target.id, nest.affine_access.get_statements(node), node)
             top = True
