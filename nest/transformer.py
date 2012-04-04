@@ -19,6 +19,11 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 import ast
 import multiprocessing
 
+try:
+    cpus = multiprocessing.cpu_count()
+except:
+    cpus = 4
+
 
 class ForTransformer(ast.NodeTransformer):
     RETURN_STUB = "nest_res"
@@ -55,13 +60,13 @@ pool = multiprocessing.pool(%i)
             if node is loop.tagged_node:
                 # generate call to generated function
                 self._functions.append(generate_parallel_function(loop))
-                slices = generate_slices(loop, self._cpus)
+                slices = generate_slices(loop, cpus)
                 arr_args = []
                 for slc in slices:
                     arr_args.append([append_slice(name, slc) for name in loop.lists])
                 stmts = []
                 resnames  = []
-                for i in range(self._cpus):
+                for i in range(cpus):
                     # generate call to apply_async
                     resname = "%s%i" % (ForTransformer.RETURN_STUB, i)
                     resnames.append(resnames)
@@ -101,9 +106,33 @@ def generate_slices(loop, cpu_count):
 
     
     return slices
-                
 
+def slice_size(loop):
+    return loop.upper_bound // cpus
 
+class BoundsTransformer(ast.NodeTransformer):
+
+    def __init__(self,loop):
+        self.loop = loop
+        self.top_level = False
+        
+
+    def visit_For(self, node):
+        if not self.top_level:
+            self.top_level = True
+            self.generic_visit(node)
+        self.top_level = False
+        
+    
+    def visit_Call(self, node):
+        if node.func.id = "range":
+            # this needs to be changed at some point
+            node.args[0] = slice_size(self.loop)
+            return node
+        else:
+            self.generic_visit(node)
+            
+            
 
 
 def generate_parallel_function(loop):
