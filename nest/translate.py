@@ -53,7 +53,7 @@ class Translator(object):
         output_code = compile(transformed_tree, self.filename, 'exec')
         pmod = ParallelModule()
         try:
-            exec(output_code,pmod.__dict__, {})
+            exec(output_code,{}, {})
             
         except:
             print(sys.exc_info()[0])
