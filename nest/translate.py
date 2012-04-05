@@ -51,8 +51,10 @@ class Translator(object):
         #         print(node)
         
         output_code = compile(transformed_tree, self.filename, 'exec')
+        pmod = ParallelModule()
         try:
-            exec(output_code)
+            exec(output_code,pmod.__dict__, {})
+            
         except:
             print(sys.exc_info()[0])
             print(sys.exc_info()[1])
@@ -61,5 +63,7 @@ class Translator(object):
 
         
 
+class ParallelModule(object):
+    pass
         
 
