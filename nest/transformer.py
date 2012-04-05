@@ -54,7 +54,10 @@ class ForTransformer(ast.NodeTransformer):
 #        ast.fix_missing_locations(self._tree)
         return_module = ast.Module(body = [parsed_import] + [parsed_pool] + self._functions + self._tree.body)
         return return_module
-
+    
+    def visit_Call(self, node):
+        self.generic_visit(node)
+        return ast.increment_lineno(node, 1000)
     # def visit_Module(self, node):
     #         self.generic_visit(node)
     #         mp_import = """
@@ -78,6 +81,10 @@ class ForTransformer(ast.NodeTransformer):
                 for slc in slices:
                     arr_args.append([append_slice(name.id, slc) for name in loop.lists])
                 stmts = []
+                parsed_import = ast.Import(names=[ast.alias(name='multiprocessing', asname=None)])
+                # parsed_pool = ast.Assign(targets=[ast.Name(id='pool', ctx=ast.Store())], value=ast.Call(func=ast.Attribute(value=ast.Name(id='multiprocessing', ctx=ast.Load()), attr='Pool', ctx=ast.Load()), args=[ast.Num(n=cpus)], keywords=[], starargs=None, kwargs=None))
+                # stmts.append(parsed_import)
+                # stmts.append(parsed_pool)
                 resnames  = []
                 for i in range(cpus):
                     # generate call to apply_async
@@ -162,11 +169,12 @@ def generate_parallel_function(loop):
     print("return values")
     print(return_values)
     transformed_tree = BoundsTransformer(loop).visit(loop.node)
-    
+    # transformed_tree.lineno=0
+    # transformed_tree.col_offset=0
     body = [transformed_tree, return_values]
     dectorator_list = []
     fun_def = ast.FunctionDef(name=name, args=args, body=body, decorator_list=[])
-    return fun_def
+    return ast.fix_missing_locations(fun_def)
 
 
 def generate_function_call(node_id, arr_args):

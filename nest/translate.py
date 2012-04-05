@@ -18,6 +18,8 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import ast
+import pdb
+import sys
 
 class Translator(object):
     
@@ -35,19 +37,27 @@ class Translator(object):
         print(safe_loops)
         print(safe_loops[0].all_statements)
         print(ast.dump(parsed_code))
-        transformer = self.Transformer(parsed_code, safe_loops)
+        transformer = self.Transformer(ast.increment_lineno(parsed_code, 100), safe_loops)
         transformed_tree = transformer.transform_tree()
+#        transformed_tree.lineno =1 
+ #       transformed_tree.col_offset = 0        
         print(type(transformed_tree))
         transformed_tree = ast.fix_missing_locations(transformed_tree)
-
-        print(ast.dump(transformed_tree))
-        for node in ast.walk(transformed_tree):
-            if isinstance(node, ast.expr) or isinstance(node, ast.stmt):
-                print(node.lineno)
-                print(node)
+        
+        # print(ast.dump(transformed_tree))
+        # for node in ast.walk(transformed_tree):
+        #     if isinstance(node, ast.expr) or isinstance(node, ast.stmt):
+        #         print(node.lineno)
+        #         print(node)
         
         output_code = compile(transformed_tree, self.filename, 'exec')
-        exec(output_code)
+        try:
+            exec(output_code)
+        except:
+            print(sys.exc_info()[0])
+            print(sys.exc_info()[1])
+            print(sys.exc_info()[2])
+        
 
         
 
