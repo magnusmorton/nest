@@ -39,18 +39,15 @@ class Translator(object):
         transformed_tree = transformer.transform_tree()
         print(type(transformed_tree))
         transformed_tree = ast.fix_missing_locations(transformed_tree)
-        for node in transformed_tree.body:
-            ast.fix_missing_locations(node)
+
         print(ast.dump(transformed_tree))
         for node in ast.walk(transformed_tree):
             if isinstance(node, ast.expr) or isinstance(node, ast.stmt):
-                node.lineno = 1
-                if not node.lineno:
-                    print(node.lineno)
-                    print(node)
+                print(node.lineno)
+                print(node)
         
         output_code = compile(transformed_tree, self.filename, 'exec')
-        #exec(output_code)
+        exec(output_code)
 
         
 
