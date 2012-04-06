@@ -20,7 +20,9 @@ along with Nest.  If not, see <http://www.gnu.org/licenses/>.
 import ast
 import pdb
 import sys
-
+import marshal
+import imp
+import unparse
 class Translator(object):
     
 
@@ -50,10 +52,15 @@ class Translator(object):
         #         print(node.lineno)
         #         print(node)
         
+        unparse.Unparser(transformed_tree, sys.stdout)
         output_code = compile(transformed_tree, self.filename, 'exec')
         pmod = ParallelModule()
         try:
-            exec(output_code,{}, {})
+            with open('output.py','w') as f:
+                unparse.Unparser(transformed_tree, f)
+        #    f.write(imp.get_magic())
+         #   marshal.dump(output_code, f)
+        #    exec(output_code,{})
             
         except:
             print(sys.exc_info()[0])

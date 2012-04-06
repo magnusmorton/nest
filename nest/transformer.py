@@ -49,10 +49,10 @@ class ForTransformer(ast.NodeTransformer):
 # """ % cpus
 #         parsed_import = ast.parse(mp_import)
         parsed_import = ast.Import(names=[ast.alias(name='multiprocessing', asname=None)])
-        parsed_pool = ast.Assign(targets=[ast.Name(id='pool', ctx=ast.Store())], value=ast.Call(func=ast.Attribute(value=ast.Name(id='multiprocessing', ctx=ast.Load()), attr='Pool', ctx=ast.Load()), args=[ast.Num(n=cpus)], keywords=[], starargs=None, kwargs=None))
+       # parsed_pool = ast.Assign(targets=[ast.Name(id='pool', ctx=ast.Store())], value=ast.Call(func=ast.Attribute(value=ast.Name(id='multiprocessing', ctx=ast.Load()), attr='Pool', ctx=ast.Load()), args=[ast.Num(n=cpus)], keywords=[], starargs=None, kwargs=None))
         #append generated imports and functions
 #        ast.fix_missing_locations(self._tree)
-        return_module = ast.Module(body = [parsed_import] + [parsed_pool] + self._functions + self._tree.body)
+        return_module = ast.Module(body = [parsed_import]  + self._functions + self._tree.body)
         return return_module
     
     def visit_Call(self, node):
@@ -82,9 +82,9 @@ class ForTransformer(ast.NodeTransformer):
                     arr_args.append([append_slice(name.id, slc) for name in loop.lists])
                 stmts = []
                 parsed_import = ast.Import(names=[ast.alias(name='multiprocessing', asname=None)])
-                # parsed_pool = ast.Assign(targets=[ast.Name(id='pool', ctx=ast.Store())], value=ast.Call(func=ast.Attribute(value=ast.Name(id='multiprocessing', ctx=ast.Load()), attr='Pool', ctx=ast.Load()), args=[ast.Num(n=cpus)], keywords=[], starargs=None, kwargs=None))
+                parsed_pool = ast.Assign(targets=[ast.Name(id='pool', ctx=ast.Store())], value=ast.Call(func=ast.Attribute(value=ast.Name(id='multiprocessing', ctx=ast.Load()), attr='Pool', ctx=ast.Load()), args=[ast.Num(n=cpus)], keywords=[], starargs=None, kwargs=None))
                 # stmts.append(parsed_import)
-                # stmts.append(parsed_pool)
+                stmts.append(parsed_pool)
                 resnames  = []
                 for i in range(cpus):
                     # generate call to apply_async
@@ -93,6 +93,7 @@ class ForTransformer(ast.NodeTransformer):
                     fn_call = generate_function_call(id(loop), arr_args[i])
                     stmts.append(ast.Assign(targets=[ast.Name(id=resname,ctx=ast.Store())], value=fn_call))
                 for i, arr in enumerate(loop.lists):
+                    print("lists %i" % i)
                     stmts.append(ast.parse(generate_template(resnames, i, arr)).body[0])
                     
                 return stmts
@@ -100,14 +101,15 @@ class ForTransformer(ast.NodeTransformer):
             print("HELLOOO!!!")
             self.generic_visit(node)
 
-def generate_template(resnames, i, arr):
-    template = "%(name)s =[ "
+def generate_template(resnames, index, arr):
+    template = "%(name)s = "
     for i,name in enumerate(resnames):
         if i < len(resnames) -1:
             template += name + ".get()[%(index)d] +"
         else:
-            template += name + ".get()[%(index)d]]"
-    return template % {'name':arr.id, 'index':i}
+            template += name + ".get()[%(index)d]"
+    print(template)
+    return template % {'name':arr.id, 'index':index}
 
 def append_slice(name, slice_pair):
     return "%s[%i:%i]" % (name, slice_pair[0], slice_pair[1])
@@ -116,7 +118,7 @@ def generate_slices(loop, cpu_count):
     """
     """
     start = loop.lower_bound
-    end  = loop.upper_bound
+    end  = loop.upper_bound +1
     size = end - start
     slice_size = size // cpu_count
     slices = []
@@ -130,7 +132,7 @@ def generate_slices(loop, cpu_count):
     return slices
 
 def slice_size(loop):
-    return loop.upper_bound // cpus
+    return (loop.upper_bound + 1) // cpus
 
 class BoundsTransformer(ast.NodeTransformer):
 
@@ -163,17 +165,27 @@ def generate_parallel_function(loop):
     name = "nest_fn" + str(id(loop))
     args = []
     for arg in loop.non_locals:
-        args.append(ast.arg(arg=arg))
-    args = ast.arguments(args=args, varag=None, kwarg=None, defaults=[], kwonlyargs=[], kw_defaults = [])
-    return_values = (ast.parse(str(loop.non_locals))).body[0]
-    print("return values")
+        args.append(ast.arg(arg=arg, annotation=None))
+    args = ast.arguments(args=args, vararg=None, kwarg=None, defaults=[], kwonlyargs=[], kw_defaults = [])
+#    return_values = (ast.parse(str(loop.non_locals))).body[0]
+    return_values = [ast.Name(id=arg, ctx=ast.Load(), lineno=1, col_offset=0) for arg in loop.non_locals]
     print(return_values)
+    return_stmt = ast.fix_missing_locations(ast.Return(value=return_values, lineno=1, col_offset=0))
+    return_template = "return ["
+    for i,arg in enumerate(loop.non_locals):
+        if i ==0:
+            return_template += "%s" % arg
+        else:
+            return_template += " ,%s" % arg
+    return_template += "]"
+    print("return values")
+    print(return_stmt)
     transformed_tree = BoundsTransformer(loop).visit(loop.node)
     # transformed_tree.lineno=0
     # transformed_tree.col_offset=0
-    body = [transformed_tree, return_values]
+    body = [transformed_tree, ast.parse(return_template).body[0]]
     dectorator_list = []
-    fun_def = ast.FunctionDef(name=name, args=args, body=body, decorator_list=[])
+    fun_def = ast.FunctionDef(name=name, args=args, body=body, decorator_list=[], returns=None)
     return ast.fix_missing_locations(fun_def)
 
 
@@ -187,9 +199,10 @@ def generate_function_call(node_id, arr_args):
     print(arr_args)
     # parsed_args = ast.parse(str(arr_args))
     parsed_args = [ast.parse(arg).body[0].value for arg in arr_args]
+    fn_args= ast.List(elts=parsed_args, ctx=ast.Load())
     print("printing parsedarggs")
     print(parsed_args[0].lineno)
-    call.args = [ast.Name(id="nest_fn%i" % node_id, ctx=ast.Load())] +  parsed_args
+    call.args = [ast.Name(id="nest_fn%i" % node_id, ctx=ast.Load()),fn_args]
     call.keywords = []
     call.starargs = None
     call.kwargs = None
