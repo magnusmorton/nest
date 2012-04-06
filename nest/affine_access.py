@@ -56,15 +56,18 @@ class SubscriptVisitor(ast.NodeVisitor):
         
     def visit_Subscript(self, node):
         target = node.value
-        print(node.ctx)
-        try:
-            print("hellooooo!!!!!")
-            self._accesses.append(Statement(target=target, access 
-                    =self.visit(node.slice), context = node.ctx))
-        except:
-            print("Affine error occurred")
-        finally:
-            print(self._accesses)
+        if isinstance(node.value, ast.Name):
+            print(node.ctx)
+            try:
+                print("hellooooo!!!!!")
+                self._accesses.append(Statement(target=target, access 
+                                            =self.visit(node.slice), context = node.ctx))
+            except:
+                print("Affine error occurred")
+            finally:
+                print(self._accesses)
+        else:
+            self.generic_visit(node)
         
     def visit_Index(self, node):
         self.in_subscript = True
