@@ -58,10 +58,11 @@ class SubscriptVisitor(ast.NodeVisitor):
         target = node.value
         if isinstance(node.value, ast.Name):
             print(node.ctx)
+            print(node.value.id + " should only be seen once")
             try:
                 print("hellooooo!!!!!")
-                self._accesses.append(Statement(target=target, access 
-                                            =self.visit(node.slice), context = node.ctx))
+                self._accesses.append(Statement(node=node, access 
+                                            =self.visit(node.slice)))
             except:
                 print("Affine error occurred")
             finally:
@@ -129,14 +130,15 @@ def dict_add(left, right):
 class Statement(object):
     (WRITE, READ) = range(2)
     
-    def __init__(self, target=None, access=None, context=None):
-        self._target = target
+    def __init__(self, node=None, access=None):
+        self._target = node.value
         self._access = access
-        self._context = None
+        self._context = node.ctx
+        self._id = id(node)
         self._loop_environment = None
-        if isinstance(context, ast.Store):
+        if isinstance(self._context, ast.Store):
             self._context = Statement.WRITE
-        if isinstance(context, ast.Load):
+        if isinstance(self._context, ast.Load):
             self._context = Statement.READ
 
 
