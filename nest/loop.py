@@ -163,12 +163,9 @@ class LoopEnvironment(object):
 
     @property
     def all_statements(self):
-        print(self._statements)
         if self._child:
-            print("child")
-            return self._statements + self._child.all_statements
+            return self._statements | self._child.all_statements
         else:
-            print("returning all statements")
             return self._statements
 
     @property
@@ -189,7 +186,9 @@ class LoopEnvironment(object):
         - `self`:
         """
         #for now, lets just assume the array statments are all there is.
-        return [stmt.target.id for stmt in self.all_statements]
+        print("ALL STMTS")
+        print(self.all_statements)
+        return {stmt.target.id for stmt in self.all_statements}
         
     @property
     def lists(self):
@@ -208,7 +207,13 @@ class LoopEnvironment(object):
     def is_safe(self):
         # fix this!!!!
         safe = True
+        print("All stmts:")
+        print(self.all_statements)
+        print("all stmts again")
+        print(self.all_statements)
         statements_left = copy.deepcopy(self.all_statements)
+        print("Statements left")
+        print(statements_left)
         while statements_left:
             statement = statements_left.pop()
             print("hej")

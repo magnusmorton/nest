@@ -52,7 +52,7 @@ class SubscriptVisitor(ast.NodeVisitor):
         
     @property
     def accesses(self):
-        return self._accesses
+        return set(self._accesses)
         
     def visit_Subscript(self, node):
         target = node.value
