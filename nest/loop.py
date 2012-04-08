@@ -198,7 +198,7 @@ class LoopEnvironment(object):
         - `self`:
         """
         #for now, lets just assume the array statments are all there is.
-        return [stmt.target for stmt in self.all_statements]
+        return {stmt.target for stmt in self.all_statements}
           
         
     def append_child(self, child):
