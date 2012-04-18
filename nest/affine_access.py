@@ -45,6 +45,7 @@ class SubscriptVisitor(ast.NodeVisitor):
         self._access = {}
         self._accesses = []
         self.in_subscript = False
+        self.context = None
 
     @property
     def access(self):
@@ -56,25 +57,36 @@ class SubscriptVisitor(ast.NodeVisitor):
         
     def visit_Subscript(self, node):
         target = node.value
+        top = False
+        if not self.in_subscript:
+            self.in_subscript = True
+            top = True
+            self.context = node.ctx
+
         if isinstance(node.value, ast.Name):
             print(node.ctx)
             print(node.value.id + " should only be seen once")
             try:
                 print("hellooooo!!!!!")
                 self._accesses.append(Statement(node=node, access 
-                                            =self.visit(node.slice)))
+                                            =self.visit(node.slice), context=self.context))
             except:
                 print("Affine error occurred")
             finally:
                 print(self._accesses)
         else:
             self.generic_visit(node)
+
+        if top:
+            self.in_subscript = False
+            self.context = None
+            
         
-    def visit_Index(self, node):
-        self.in_subscript = True
-        self._access = self.visit(node.value)
-        self.in_subscript = False
-        return self._access
+    # def visit_Index(self, node):
+    #     self.in_subscript = True
+    #     self._access = self.visit(node.value)
+    #     self.in_subscript = False
+    #     return self._access
         
     def visit_Name(self, node):
         return {node.id:1}
@@ -130,13 +142,14 @@ def dict_add(left, right):
 class Statement(object):
     (WRITE, READ) = range(2)
     
-    def __init__(self, node=None, access=None):
+    def __init__(self, node=None, access=None, context=None):
         self._target = node.value
         self._access = access
-        self._context = node.ctx
+        self._context = context
         self._id = id(node)
         self._loop_environment = None
         if isinstance(self._context, ast.Store):
+            print("NO WAY!!!")
             self._context = Statement.WRITE
         if isinstance(self._context, ast.Load):
             self._context = Statement.READ
