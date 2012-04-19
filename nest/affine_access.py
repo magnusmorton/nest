@@ -82,11 +82,11 @@ class SubscriptVisitor(ast.NodeVisitor):
             self.context = None
             
         
-    # def visit_Index(self, node):
-    #     self.in_subscript = True
-    #     self._access = self.visit(node.value)
-    #     self.in_subscript = False
-    #     return self._access
+    def visit_Index(self, node):
+        self.in_subscript = True
+        self._access = self.visit(node.value)
+        self.in_subscript = False
+        return self._access
         
     def visit_Name(self, node):
         return {node.id:1}
@@ -194,6 +194,8 @@ def is_dependent(stmt1, stmt2):
     """ This is a bit crazy"""
     if stmt1.context is Statement.READ and stmt2.context is Statement.READ:
         return False
+    print(stmt1.access)
+    print(stmt2.access)
     keys = get_unique_keys(stmt1.access, stmt2.access)
     print(keys)
     domain_matrix = []
