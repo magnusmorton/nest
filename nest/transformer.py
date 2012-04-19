@@ -90,7 +90,7 @@ class ForTransformer(ast.NodeTransformer):
                     # generate call to apply_async
                     resname = "%s%i" % (ForTransformer.RETURN_STUB, i)
                     resnames.append(resname)
-                    fn_call = generate_function_call(id(loop), arr_args[i])
+                    fn_call = generate_function_call(id(loop), arr_args[i], i)
                     stmts.append(ast.Assign(targets=[ast.Name(id=resname,ctx=ast.Store())], value=fn_call))
                 for i, arr in enumerate(loop.lists):
                     print("lists %i" % i)
@@ -158,6 +158,36 @@ class BoundsTransformer(ast.NodeTransformer):
             self.generic_visit(node)
             
             
+class AccessTransformer(ast.NodeTransformer):
+    def __init__(self, loop):
+        self.loop = loop
+        self.in_access = False
+        self.in_for = False
+        self.slice_size = slice_size(loop)
+
+    def visit_Subscript(self, node):
+        top = False
+        if not self.in_access:
+            self.in_access = True
+            top = True
+        self.generic_visit(node)
+        if top:
+            self.in_access = False
+
+    def visit_For(self, node):
+        self.in_for = True
+        self.generic_visit(node)
+        
+
+    # def visit_Name(self, node):
+    #     if not self.in_access and not self.in_for:
+    #         # if node.id == self.loop.target:
+    #         #     return ast.parse("%s + proc_id * %d" % (node.id, self.slice_size)).body[0]
+    #         pass
+    #     else:
+    #         if self.in_for:
+    #             self.in_for = False
+    #         self.generic_visit(node)
 
 
 def generate_parallel_function(loop):
@@ -166,6 +196,7 @@ def generate_parallel_function(loop):
     args = []
     for arg in loop.non_locals:
         args.append(ast.arg(arg=arg, annotation=None))
+    args.append(ast.arg(arg="proc_id", annotation=None))
     args = ast.arguments(args=args, vararg=None, kwarg=None, defaults=[], kwonlyargs=[], kw_defaults = [])
 #    return_values = (ast.parse(str(loop.non_locals))).body[0]
     return_values = [ast.Name(id=arg, ctx=ast.Load(), lineno=1, col_offset=0) for arg in loop.non_locals]
@@ -181,6 +212,7 @@ def generate_parallel_function(loop):
     print("return values")
     print(return_stmt)
     transformed_tree = BoundsTransformer(loop).visit(loop.node)
+#    transformed_tree = AccessTransformer(loop).visit(transformed_tree)
     # transformed_tree.lineno=0
     # transformed_tree.col_offset=0
     body = [transformed_tree, ast.parse(return_template).body[0]]
@@ -189,7 +221,7 @@ def generate_parallel_function(loop):
     return ast.fix_missing_locations(fun_def)
 
 
-def generate_function_call(node_id, arr_args):
+def generate_function_call(node_id, arr_args, index):
    # parsed_call = ast.parse("pool.apply_async(nest_fn%d)" % node_id)
     call = ast.Call()
     call.func = ast.Attribute(value=ast.Name(id='pool', ctx=ast.Load()), attr="apply_async", ctx=ast.Load())
@@ -199,6 +231,7 @@ def generate_function_call(node_id, arr_args):
     print(arr_args)
     # parsed_args = ast.parse(str(arr_args))
     parsed_args = [ast.parse(arg).body[0].value for arg in arr_args]
+    parsed_args.append(ast.Num(n = index))
     fn_args= ast.List(elts=parsed_args, ctx=ast.Load())
     print("printing parsedarggs")
     print(parsed_args[0].lineno)
