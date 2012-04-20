@@ -24,7 +24,7 @@ class Foo():
             a[i] = (b[i])*43
             b[i] = 10%3
         for i in range(1000):
-            a = (b[i])*43
+            a[i] = (b[i])*43
             b[i] = 10%3
         
         for i in range(1000):
