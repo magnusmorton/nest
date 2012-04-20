@@ -5,40 +5,43 @@ class Foo():
         return 345**3
 
     def looper(self):
-        a = [0]*1000
+        print("looper")
+        a = [0]*10000
         # for elm in a:
         #     elm = 3
         
-        b = [4]*1000
-        for i in range(1000):
+        b = [4]*10000
+        for i in range(10000):
             a[i] = (b[i]) * 43
             b[i] = 10%3
 
-        for i in range(1000):
+        for i in range(10000):
             a[i]= (b[i])*43
             b[i] = 10%3
-        for i in range(1000):
+        for i in range(10000):
             a[i] = (b[i])*43
             b[i] = 10%3
-        for i in range(1000):
+        for i in range(10000):
             a[i] = (b[i])*43
             b[i] = 10%3
-        for i in range(1000):
+        for i in range(10000):
             a[i] = (b[i])*43
             b[i] = 10%3
         
-        for i in range(1000):
+        for i in range(10000):
             a[i] = (b[i])*43
             b[i] = 10%3
-        for i in range(1000):
+        for i in range(10000):
             a[i] = (b[i])*43
             b[i] = 10%3
-        for i in range(1000):
+        for i in range(10000):
             a[i] = (b[i])*43
             b[i] = 10%3
-        for i in range(1000):
+        for i in range(10000):
             a[i] = (b[i])*43
             b[i] = 10%3
+
+        print("END")
 
 
 Foo().looper()
